@@ -49,7 +49,7 @@ This document describes how a Session Initiation Protocol (SIP) Conference Serve
 This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
 
 One main advantage of the solution is the possibility to use existing RTP-based audiovisual conferencing infrastructure and protocols to realize data distributing
-using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe infrastructure and protocols. 
+using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe infrastructure and protocols.
 
 NOTE: SIP Conference servers might behave differently depending on configuration, profiles etc. The procedures in this document are based on a generic understanding of how conference servers behave.
 
