@@ -1,9 +1,9 @@
 ---
 title: "Session Initiation Protocol (SIP) Conference Server for Publish/Subscribe"
 abbrev: "SIP PubSub"
+docname: draft-holmberg-conference-pubsub-latest
 category: info
 
-docname: draft-holmberg-conference-pubsub-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
