@@ -1,6 +1,6 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "Session Initiation Protocol (SIP) Conference Server for Publish/Subscribe"
+abbrev: "SIP PubSub"
 category: info
 
 docname: draft-holmberg-conference-pubsub-latest
@@ -12,9 +12,12 @@ v: 3
 # area: AREA
 # workgroup: WG Working Group
 keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
+ - Session Initiation Protocol
+ - SIP
+ - Publish
+ - Subscribe
+ - PubSub
+ - Conference
 venue:
 #  group: WG
 #  type: Working Group
@@ -26,7 +29,7 @@ venue:
 author:
  -
     fullname: "Christer Holmberg"
-    organization: Your Organization Here
+    organization: Ericsson
     email: "christer.holmberg@ericsson.com"
 
 normative:
@@ -36,14 +39,20 @@ informative:
 
 --- abstract
 
-TODO Abstract
+This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
 
 
 --- middle
 
 # Introduction
 
-TODO Introduction
+This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
+
+One main advantage of the solution is the possibility to use existing RTP-based audiovisual conferencing infrastructure and protocols to realize data distributing using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe infrastructure and protocols. 
+
+NOTE: SIP Conference servers might behave differently depending on configuration, profiles etc. The procedures in this document are based on a generic understanding of how conference servers behave.
+
+NOTE: The examples in this document use the RTP T.140 real-time text (RTT) payload format to transport the payload data, and SenML to structure and encode the payload data. Other mechanisms can also be used.
 
 
 # Conventions and Definitions
@@ -53,7 +62,7 @@ TODO Introduction
 
 # Security Considerations
 
-TODO Security
+The Security Considerations for SIP Conferencing apply to this document.
 
 
 # IANA Considerations
@@ -66,4 +75,4 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-TODO acknowledge.
+This document is based on the Master Thesis of Trung Van.
