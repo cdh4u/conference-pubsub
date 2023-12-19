@@ -185,17 +185,17 @@ When a conference participants joins a conference by sending a SIP INVITE reques
 # SIP Event Package for PubSub
 
 {{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including
-information about the conference itsel, and information about other conference participants. For a PubSub conference, the <subject> child element of the <conference-description> element can
+information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can
 be used to indicate the Topic associated with the conference.
 
 ## Extensions for PubSub
 
 ### Maximum number of conference participants
 
-The <maximum-user-count> element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media
+The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media
 a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in
-how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., <maximum-user-count-publisher>
-and <maximum-user-count-subscriber>.
+how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher"
+and "maximum-user-count-subscriber".
 
 
 This document describes a new SIP Event Package, the SIP PublishSubscribe E
@@ -214,11 +214,24 @@ this document, this chapter describes a few extensions that have been studied in
 
 ### Simulcast and Resolution
 
+While it is quite clear what "resolution" means for audio and video, there is no unique definition for non-AV data.
 
+For example, resolution can refer to the number of digits are included when the payload contains numeric values.
+
+For example, resolution can refer to how often the publisher is sending data. The more freuquent, the higher the resolution.
+
+For example, resolution can refer to the amount of data (e.g., netadata) that a publisher in sending.
 
 
 A publisher can publish the same data using different "resolutions". 
 
+### Retransmission
+
+By default RTP provides unreliable transport. The same applies to different PubSub frameworks that use UDP as transport protocol. However, some PubSub
+frameworks use TCP transport, or use other mechanisms in order to provide reliable data delivery. There are RTP extension that have been used to provide
+reliable data delivery, or to simply inform the sender that data has been lost.
+
+XXX specifies an RTP extension where RTP packets are re-transmitted by default. 
 
 
 # Security Considerations
