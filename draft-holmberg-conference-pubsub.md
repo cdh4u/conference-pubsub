@@ -231,7 +231,7 @@ By default RTP provides unreliable transport. The same applies to different PubS
 frameworks use TCP transport, or use other mechanisms in order to provide reliable data delivery. There are RTP extension that have been used to provide
 reliable data delivery, or to simply inform the sender that data has been lost.
 
-XXX specifies an RTP extension where RTP packets are re-transmitted by default. 
+XXX specifies an RTP extension where RTP packets are re-transmitted by default.
 
 
 # Security Considerations
