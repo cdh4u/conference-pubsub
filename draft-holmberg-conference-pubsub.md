@@ -138,6 +138,10 @@ video of the currently speaking conference participant (referred to as "current 
 PubSub Conference:
 : A SIP conference used to realize data distribution using the Publish/Subscribe traffic pattern, following the procedures in this document.
 
+PubSub Conference Participant/PubSub Participant:
+: An endpoint that has joined (or is about to join) a PubSub Conference. Within the PubSub Conference, the PubSub Participant will take the role as a Publisher, Subscriber or both.
+
+
 NOTE: There are more and more use-cases where both AudioVisual data and non-AudioVisual data is exchanged within the same conference. The description of a mixed AudioVisual/PubSub
 conference is outside the scope of this document.
 
@@ -148,13 +152,11 @@ AudioVisual Data:
 
 # SIP Subject Header Field {#sec-sip-considerations-subject}
 
-The SIP Subject header field can be used to indicate the PubSub topic associated with the conference.
-
-NOTE: If a participant joins an existing conference, and uses a 
-
+The SIP Subject header field can be used to indicate the PubSub Topic associated with the PubSub Conference.
+ 
 # SDP Considerations {#sec-sdp-considerations}
 
-# SDP Direaction Attribute {#sec-sdp-considerations-dir-attr}
+## SDP Direaction Attribute {#sec-sdp-considerations-dir-attr}
 
 These attributes can be used to indicate the PubSub role of a participant.
 
@@ -171,34 +173,66 @@ the conference server that it does not want to receive data associated with the 
 
 ## Conference lifecycle
 
-An AV conference
+### Conference creation
 
+An AV conference is typically created either by one of the participants, or by a contralized function tool. 
+
+### Conference duration and termination
+
+The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.
+
+The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.
 
 ## Join existing conference
 
-Having multiple conferences associated with the same Topic is not practical, unless there is a specific reason why
+A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI. 
 
-When a conference participants joins a conference by sending a SIP INVITE request to the 
+It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code{{!RFC3261}}) or simply add the endpoint to the existing conference.
 
+# SIP Event Package Considerations
 
-
-# SIP Event Package for PubSub
+## SIP Event Package for Conference State
 
 {{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including
 information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can
 be used to indicate the Topic associated with the conference.
 
-## Extensions for PubSub
+### Extensions for PubSub
 
-### Maximum number of conference participants
+#### Maximum Number of Conference Participants
 
 The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media
 a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in
 how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher"
 and "maximum-user-count-subscriber".
 
+## SIP Event Package for PublishSubscribe
+ 
+While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.
 
-This document describes a new SIP Event Package, the SIP PublishSubscribe E
+This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that. 
+
+~~~~ aasvg
+
+pubsub-conferences-info
+     |
+     |-- host-info
+     |
+     |-- pubsub-conferences
+     |    |-- pubsub-conference
+     |    |    |-- conference-URI
+     |    |    |-- pubsub-topic
+     |    |-- pubsub-conference
+     |    .    |-- conference-URI
+     |    .    |-- pubsub-topic
+     |    .    
+     |
+~~~~
+{: #fig-arch title='SIP Event Package for PublishSubscribe' artwork-align="center"}
+
+## XML Schema
+
+TBD
 
 
 # RTP Considerations
