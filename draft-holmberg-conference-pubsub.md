@@ -69,6 +69,24 @@ NOTE: The examples in this document use the RTP T.140 real-time text (RTT) paylo
 
 While RTP is a generic transport protocol, the main usage has been for transport of real-time AudioVisual data. Non-AudioVisual data has typically been data associated with AudioVisual data, e.g., real-time text (rtt), DTMF signals. However, at the time of writing this document, IETF is working on a number of specifications where RTP is used to transport other types of non-AV data.
 
+
+## Publish/Subscribe
+
+Publish/Subscribe (PubSub) 
+
+
+When a publisher publishes data it associates it with a topic. The topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publsiher (e.g., "water-pump-123"). The structure and syntaxof the topic depends on the Pub/Sub framework. Some PubSub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.
+
+Subscribers that are interested in data assocoated with the topic will subscribe to the topic. The Pub/Sub framework will then route published
+data to each subscriber that has subscribed to the topic. The subscriptions and routing of published data is often handled by an intermediary function, often called a broker. Publishers will publish data to the broker, and the broker will forward the data to each subscriber that has subscribed to the topic associated with the data.
+
+
+Many Pub/Sub frameworks.
+
+Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather relies on other mechanisms (e.g., IP multicast) to route published messages from publishers to subscribers. Broker-less Pub/Sub is outside the scope of this document.
+
+
+
 ~~~~ aasvg
 
    .-----------.          .----------.  observe  .-----------.
