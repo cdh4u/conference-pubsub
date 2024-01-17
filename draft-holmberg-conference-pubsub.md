@@ -278,6 +278,7 @@ NOTE: The conference-uri is defined as an pubsub-conference element attribute. A
 
 NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
 
+~~~~
 {: #fig-arch title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
 
 
