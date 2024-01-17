@@ -42,6 +42,7 @@ normative:
  RFC3550:
  RFC4353:
  RFC4575:
+ RFC4585
  RFC8428:
 
 informative:
@@ -234,17 +235,15 @@ This section suggests a new SIP Event Package, SIP Event Package for PublishSubs
 
 pubsub-conferences-info
      |
-     |-- host-info
-     |
      |-- pubsub-conferences
-     |    |-- pubsub-conference
-     |    |    |-- conference-URI
-     |    |    |-- topic
-     |    |-- pubsub-conference
-     |    .    |-- conference-URI
-     |    .    |-- topic
-     |    .    
-     |
+          |-- pubsub-conference
+          |    |-- conference-URI
+          |    |-- topic
+          |-- pubsub-conference
+          .    |-- conference-URI
+          .    |-- topic
+          .    
+     
 ~~~~
 {: #fig-arch title='SIP Event Package for PublishSubscribe' artwork-align="center"}
 
@@ -287,6 +286,11 @@ NOTE: As an option, the topic could also be defined as an pubsub-conference elem
 ## RTP Payload Type (PT) for PubSub
 
 
+
+## RTP Header Marker Bit
+
+This document does not define usage of the RTP header Marker bit.
+
 ## RTP Extensions for PubSub
 
 A large number of RTP extensions have been specified for RTP. Many of the extensions have been specified with an AudioVisual use-case in mind. However, many of them can also
@@ -308,11 +312,34 @@ A publisher can publish the same data using different "resolutions".
 
 ### Retransmission
 
+The RTP header carries both a sequence number and a timestamp to allow a receiver to distinguish between lost packets and periods of time when no data was transmitted.
+
 By default RTP provides unreliable transport. The same applies to different PubSub frameworks that use UDP as transport protocol. However, some PubSub
 frameworks use TCP transport, or use other mechanisms in order to provide reliable data delivery. There are RTP extension that have been used to provide
 reliable data delivery, or to simply inform the sender that data has been lost.
 
 XXX specifies an RTP extension where RTP packets are re-transmitted by default.
+
+#### Redundant Audio Data
+
+{{!RFC2198}} defines an RTP payload format for encoding redundant audio data. If a data packet is lost, it might be possible to reconstruct the information of the lost packet from the redundant data
+that is included in the subsequent packets. The mechanism can also be used for non-AV data. However, in case of time-critical data, where the lost data would be considered "expired" it it would
+arrive as redundant data in a subsequent packet, the mechanism might not be useful (unless for logging purpose etc).
+
+#### Forward Error Detection (FEC)
+
+{{!RFC2733}}
+
+Multiple data packets are used to create a single FEC packet. The FEC payload contains information which data packets have been used to create the FEC packet.
+
+
+# RTCP Considerations
+
+## RTCP FB
+
+The RTCP Feedback (FB) {{!RFC4585}} 
+
+
 
 
 # Standardization Considerations
