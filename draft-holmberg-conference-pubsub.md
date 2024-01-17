@@ -60,12 +60,12 @@ This document describes how a Session Initiation Protocol (SIP) Conference Serve
 This document describes how a Session Initiation Protocol (SIP) {{!RFC3261}} Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
 
 One main advantage of the solution is the possibility to use existing RTP-based audiovisual conferencing infrastructure and protocols to realize data distributing
-using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe infrastructure and protocols.
+using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe frameworks and protocols.
 
 NOTE: SIP Conference servers might behave differently depending on configuration, profiles etc. The procedures in this document are based on a generic understanding of how conference servers behave.
 
-NOTE: The examples in this document use the RTP T.140 real-time text (RTT) payload format to transport the payload data, and SenML to structure and encode the payload data. Other mechanisms can also be used.
-
+NOTE: The examples in this document use the RTP T.140 real-time text (RTT) payload format to transport the payload data, and SenML to structure and encode the payload data. Other payload formats and
+encodings can also be used.
 
 While RTP is a generic transport protocol, the main usage has been for transport of real-time AudioVisual data. Non-AudioVisual data has typically been data associated with AudioVisual data, e.g., real-time text (rtt), DTMF signals. However, at the time of writing this document, IETF is working on a number of specifications where RTP is used to transport other types of non-AV data.
 
@@ -89,18 +89,18 @@ Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather re
 
 ~~~~ aasvg
 
-   .-----------.          .----------.  observe  .-----------.
-   |           | publish  |          |<----------+           |
-   | publisher +--------->+          +---------->| subscribe |
-   |           |          |          +---------->|           |
-   '-----------'          |          |           '-----------'
-        ...               |  broker  |                ...
+   .-----------.          .----------.  subscribe  .------------.
+   |           |   data   |          |<------------+            |
+   | Publisher +--------->+          |    data     | Subscriber |
+   |           |          |          +------------>|            |
+   '-----------'          |          |             '------------'
+        ...               |  Broker  |                ...
         ...               |          |                ...
-   .-----------.          |          |  observe  .-----------.
-   |           | publish  |          |<----------+           |
-   | publisher +--------->|          +---------->| subscribe |
-   |           |          |          +---------->|           |
-   '-----------'          '----------'           '-----------'
+   .-----------.          |          |  subscribe  .------------.
+   |           |   data   |          |<------------+            |
+   | Publisher +--------->+          |    data     | Subscriber |
+   |           |          |          +------------>|            |
+   '-----------'          '----------'             '------------'
 ~~~~
 {: #fig-arch title='Publish/Subscribe Architecture' artwork-align="center"}
 
@@ -239,10 +239,10 @@ pubsub-conferences-info
      |-- pubsub-conferences
      |    |-- pubsub-conference
      |    |    |-- conference-URI
-     |    |    |-- pubsub-topic
+     |    |    |-- topic
      |    |-- pubsub-conference
      |    .    |-- conference-URI
-     |    .    |-- pubsub-topic
+     |    .    |-- topic
      |    .    
      |
 ~~~~
@@ -251,6 +251,34 @@ pubsub-conferences-info
 ## XML Schema
 
 TBD
+
+## Example
+
+~~~~ aasvg
+
+   <?xml version="1.0" encoding="UTF-8"?>
+   <pubsub-conferences-info
+    xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"
+    entity="sips:confserver@example.com"
+    state="full" version="1">
+   <!--
+     PUBSUB CONFERENCES
+   -->
+    <pubsub-conferences>
+     <pubsub-conference entity="sip:pubsubconf123@example.com" state="full">
+      <topic>water temperature</topic>
+     </pubsub-conference>
+     <pubsub-conference entity="sip:pubsubconf456@example.com" state="full">
+      <topic>air temperature</topic>
+     </pubsub-conference>
+    </pubsub-conferences>
+   </pubsub-conferences-info>
+
+NOTE: The conference-uri is defined as an pubsub-conference element attribute. As an option, it could be defined as a separate element.
+
+NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
+
+{: #fig-arch title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
 
 
 # RTP Considerations
@@ -284,6 +312,20 @@ frameworks use TCP transport, or use other mechanisms in order to provide reliab
 reliable data delivery, or to simply inform the sender that data has been lost.
 
 XXX specifies an RTP extension where RTP packets are re-transmitted by default.
+
+
+# Standardization Considerations
+
+This document does not formally standardize any new protocol extensions, SIP event packages etc. Each extension, event package etc described in the document
+would need to be standardized following the normal standardization procedures. The protocol extensions and event packages described in this document are collated
+and listed below.
+
+
+SIP Event Package for Conference State          Section XXX        Extension to the event package for providing separate information about publishers and subscribers.
+
+SIP Event Package for PublishSubscribe          Section XXX        New SIP event package for providing information about PubSub Conferences (conference URI and topic) hosted by a Conference Server.
+
+
 
 
 # Security Considerations
