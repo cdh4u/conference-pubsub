@@ -208,6 +208,69 @@ A conference server might host multiple conferences that share the same conferen
 
 It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code{{!RFC3261}}) or simply add the endpoint to the existing conference.
 
+
+## Data Mixing
+
+
+
+
+
+The way a conference server depends on the media type. In an AV conference, the audio ... For example, all incoming audio data is typically mixed together, so that everyone can hear everyone else. In case of video, if the con the conference server typcially forwards video stream of the participants currently spekakinh.
+
+In the case of non-AV data, the default behavior within a PubSub Conference is to forward the data from a PubSub Publisher to each PubSub Subscriber, without performing any mixing or selection of what data is forwarded.
+
+~~~~ aasvg
+
+   .-----------.          .----------.             .------------.
+   |           |  data X  |          |             |            |
+   | Publisher +--------->+          |    data X   | Subscriber |
+   |           |          |          +------------>|            |
+   '-----------'          |          |             '------------'
+                          |  Broker  |                ...
+                          |          |                ...
+                          |          |             .------------.
+                          |          |             |            |
+                          |          |    data X   | Subscriber |
+                          |          +------------>|            |
+                          '----------'             '------------'
+~~~~
+{: #fig-arch title='PubSub Conference Data Forwarding' artwork-align="center"}
+
+As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers. 
+
+
+For example, if the Broker receives data in a SenML Record from Publisher A and Publisher B at the same time it might choose to place and forward the SenML Records in a SenML Pack.
+
+
+~~~~ aasvg
+
+SenML Record from Publisher A:
+
+   [
+     {"n":"urn:dev:ow:10e2073a01080063","u":"Cel","v":23.1}
+   ]
+
+SenML Record from Publisher B:
+
+   [
+     {"n":"urn:dev:ow:F0ea673a01000036","u":"Cel","v":25.7}
+   ]
+
+
+SenML Pack forwarded by the Broker towards the Subscribers:
+
+   [
+     {"n":"urn:dev:ow:10e2073a01080063","u":"Cel","v":23.1},
+     {"n":"urn:dev:ow:F0ea673a01000036","u":"Cel","v":25.7}
+   ]
+
+~~~~
+{: #fig-arch title='SenML Pack created by broker' artwork-align="center"}
+
+
+
+
+
 # SIP Event Package Considerations
 
 ## SIP Event Package for Conference State
