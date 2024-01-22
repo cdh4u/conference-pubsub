@@ -39,12 +39,15 @@ normative:
  RFC3261:
  RFC3264:
  RFC3265:
+ RFC3389:
  RFC3550:
  RFC4353:
  RFC4575:
- RFC4585
+ RFC4585:
+ RFC6263:
  RFC8428:
-
+ RFC9071:
+ 
 informative:
 
  
@@ -167,6 +170,86 @@ conference is outside the scope of this document.
 AudioVisual Data:
 : Data that contains encoded audio or video.
 
+# Conference Considerations {#sec-conf-considerations}
+
+## RFC 9071 Considerations {#sec-conf-considerations-9071}
+
+{{!RFC9071}} provides guidance on mixing of real-time text (RTT) by a conference server.
+
+
+Received Real-time text is often read by humans. Because of that, it is important that text that was sent simultaneously by different senders is also received at the simultanelusly
+by the receivers. 
+
+
+{{!RFC9071}} makes assumptions regarding how participant are sending text. It assumes that in a typcial scenario only one participant will send text at any given time. In a PubSub Conference, 
+the same assumption cannot be done, as multiple publisher might simulateneously publish data to the same topic. In addition, unless a publisher also acts as a subscriber, it does not even
+know when and if other publishers are publishing data.
+
+{{!RFC9071}} focuses on two mixing solutions: 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' (Section 2.2) and 'Mixing for Multiparty-Unaware Endpoints (Section 2.3)'.
+
+In the 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' solution, the receivers will receive the text from all senders within a single RTP stream from the conference server.
+
+
+
+## Keep-alive and Heartbeat Considerations
+
+In a non-AV PubSub Conference, Publishers might stay within a PubSub conference for a long periods without publishing any data. Subscribers will not publish any data at all. There are a couple of possible
+implications that must be considered: NAT binding keep-alives and heartbeats (i.e., inform other PubSub Participants that a PubSub Participant is still 'alive'). NAT binding keep-alives are needed in cases where
+a PubSub Participants needs to send periodic data in order to maintain NAT bindings between itself and the PubSub Conference servers. This is important for Subscribers, but also for Publishers that publish
+data with very long intervals.
+
+{{!RFC6263}} describes different RTP/RTCP mechanisms to send NAT keep-alives.
+
+The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/RTCP. Instead, a participant will send an empty transport packet (e.g., UDP packet).  Note that this mechanism is useful mainly for NAT traversal purpose. The conference server application will typcially not be informed about these packets, and will not forward the packets to other conference particiapants. This mechanism is applicable to non-AV data in PubSub Conferences.
+
+The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific RTP payload format for comfort noise {{!RFC3389}}. The payload format has been defined for audio data, and must be supported by both senders
+and receivers. Is not applicable for non-AV data in PubSub conferences.
+
+The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/RTCP multiplexing, where the same 5-typle is used for the RTP and RTCP packets. When there is no data to be sent, an RTCP packet
+can be sent as a keep-alive. Note that Subscribers that do not send RTP packets can still send RTCP packets.
+
+The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with Unknown Payload Type' mechanisms uses invalid with an unvalid RTP version number respectively a RTP packet with a non-negotiated payload type.
+Receivers are expected to ignore and discard these types of RTP packets. This mechanism is applicable to non-AV data in PubSub Conferences.
+
+
+
+In an AV conference, most participants will typically both send and receive data. However, in a PubSub Conference many of the PubSub Participants will only send data (Publihser)
+or receive data (Subscriber). However, eventhough a Subsriber does not publish any data, it might still use the mechanisms above if needed, and a PubSub Conference Server needs
+to be prepared to receive such RTP/RTCP packets from both Publishers and Subscribers.
+
+NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is that Publishers and Subscribers do not need to be aware of each other. In such cases there is no need to use an end-to-end heartbeat
+mechanism between Publishers and Subscribers. Note that there might still be a heartbeat mechanism used between Publishers/Subsribers and the Broker. However, there might be cases where Publishers
+and Subscribers are tightly coupled, and where a heartbeat mechanism is required.
+
+NOTE: Some data formats might define their own methods for sending heartbeats. For example, there might a way to indicate that the payload is only used for heartbeat purpose, and does not contain any
+additional data.
+
+
+
+
+## Single vs multiple RTP sessions
+
+An RTP Stream is identified by the data source (SSRC). 
+
+
+Within a PubSub Conference, the number of publishers might be very large. In addition, the number of publsihers might vary quite frequently, as publishers join and leave the PubSub Conference.
+For that reason, it is not convenient for a subscriber to negotiate a separate RTP session for each publisher with the conference server. In addtion, one of the ideas behind the Publish/Subscribe
+pattern is that a Subscriber does not need to know, or be impacted, based on the number of Publsihers.
+
+
+In the case of real-time text, receivers need to be able to identify the sender of each RTP packet, so that the text from all senders is not mixed togheter.
+
+In some PubSub Conferences, Subscribers might not need to know which Publisher has published a specific set of data. 
+
+However, the SSRC 
+
+
+
+
+
+NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers 
+
+
 # SIP Considerations {#sec-sip-considerations}
 
 # SIP Subject Header Field {#sec-sip-considerations-subject}
@@ -206,7 +289,7 @@ The interest for a PubSub topic might last for a very long time. Because of that
 
 A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI. 
 
-It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code{{!RFC3261}}) or simply add the endpoint to the existing conference.
+It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code {{!RFC3261}}) or simply add the endpoint to the existing conference.
 
 
 ## Data Mixing
