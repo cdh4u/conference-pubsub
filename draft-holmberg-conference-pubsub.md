@@ -59,6 +59,74 @@ This document describes how a Session Initiation Protocol (SIP) Conference Serve
 
 --- middle
 
+# Terminology
+
+Synchronization source (SSRC): The source of a stream of RTP
+      packets, identified by a 32-bit numeric SSRC identifier carried in
+      the RTP header so as not to be dependent upon the network address.
+      All packets from a synchronization source form part of the same
+      timing and sequence number space, so a receiver groups packets by
+      synchronization source for playback.  Examples of synchronization
+      sources include the sender of a stream of packets derived from a
+      signal source such as a microphone or a camera, or an RTP mixer
+      (see below).  A synchronization source may change its data format,
+      e.g., audio encoding, over time.  The SSRC identifier is a
+      randomly chosen value meant to be globally unique within a
+      particular RTP session (see Section 8).  A participant need not
+      use the same SSRC identifier for all the RTP sessions in a
+      multimedia session; the binding of the SSRC identifiers is
+      provided through RTCP (see Section 6.5.1).  If a participant
+      generates multiple streams in one RTP session, for example from
+      separate video cameras, each MUST be identified as a different
+      SSRC.
+
+An SSRC is defined to identify a single timing and sequence number
+      space.
+
+   Contributing source (CSRC): A source of a stream of RTP packets
+      that has contributed to the combined stream produced by an RTP
+      mixer (see below).  The mixer inserts a list of the SSRC
+      identifiers of the sources that contributed to the generation of a
+      particular packet into the RTP header of that packet.  This list
+      is called the CSRC list.  An example application is audio
+      conferencing where a mixer indicates all the talkers whose speech
+      was combined to produce the outgoing packet, allowing the receiver
+      to indicate the current talker, even though all the audio packets
+      contain the same SSRC identifier (that of the mixer).
+
+   Mixer: An intermediate system that receives RTP packets from one
+      or more sources, possibly changes the data format, combines the
+      packets in some manner and then forwards a new RTP packet.  Since
+      the timing among multiple input sources will not generally be
+      synchronized, the mixer will make timing adjustments among the
+      streams and generate its own timing for the combined stream.
+      Thus, all data packets originating from a mixer will be identified
+      as having the mixer as their synchronization source.
+
+   Translator: An intermediate system that forwards RTP packets
+      with their synchronization source identifier intact.  Examples of
+      translators include devices that convert encodings without mixing,
+      replicators from multicast to unicast, and application-level
+      filters in firewalls.
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                           timestamp                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           synchronization source (SSRC) identifier            |
+   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+   |            contributing source (CSRC) identifiers             |
+   |                             ....                              |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+In RTP, multiplexing is provided by the
+   destination transport address (network address and port number) which
+   is different for each RTP session.
+
 # Introduction
 
 This document describes how a Session Initiation Protocol (SIP) {{!RFC3261}} Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
