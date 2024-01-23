@@ -293,6 +293,34 @@ NOTE: Some data formats might define their own methods for sending heartbeats. F
 additional data.
 
 
+## RTCP Considerations
+
+
+
+
+
+## RTP Mixing or Translating
+
+In an AV conference, the actual time when the AV data was created is typcially not that important to the receiver. It is more important that the conference server is able to mix and lip-synch AV data that has been created at the same time by the senders.
+
+
+### Translating
+
+
+In case of translation, the original SSRC and the Timestamp will not be replaced by the translator. 
+
+
+### Mixing
+
+
+
+In case of mixing, the conference server will insert its own SSRC and Timestamp in the outgoing RTP packets with the mixed media. While the CSRC field can provide the SSRCs of the RTP packets used to create the mix, the Timestamp values will be lost. In a Publish/Subscribe scenarios, if the Subscribers need to know when data has been published, they cannot rely on getting that information from RTP.
+
+NOTE: In many cases Subscribers will be more interested in when the published data has been generated or sampled, rather when the data has been publsihed. The data sampling time needs to be conveyed in the data payload. 
+
+POTENTIAL STANDARDIZATION WORK: In addition to contributing SSRCs, also include contributing Timestamps.
+
+POTENTIAL STANDARDIZATION WORK: Add data sampling timestamp to RTP
 
 
 ## Single vs multiple RTP sessions
