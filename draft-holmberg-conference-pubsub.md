@@ -448,6 +448,19 @@ In some PubSub Conferences, Subscribers might not need to know which Publisher h
 However, the SSRC 
 
 
+## Sender Timestamp
+
+RTP does not provide a mechanism to indicate the time when a packet is sent, or when the RTP payload was sampled.
+
+The following experimental RTP header extension to include the absolute packet send time in an RTP packet:
+
+https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-send-time
+
+https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-capture-time/
+
+
+
+
 
 
 
