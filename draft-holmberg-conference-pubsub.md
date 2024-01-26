@@ -243,6 +243,10 @@ conference is outside the scope of this document.
 AudioVisual Data:
 : Data that contains encoded audio or video.
 
+Network Time Protocol (NTP): The absolute time in seconds relative to midnight UTC on 1 January 1900. 
+
+
+
 # Conference Considerations {#sec-conf-considerations}
 
 
@@ -354,6 +358,10 @@ https://datatracker.ietf.org/doc/html/rfc8627
 
 
 
+## Time Considerations
+
+In a Publish/Subscribe network, as publishers publish data independently from each other, there is typically no need for subscribers to syncrhonize or "lip-synch" the data.
+
 
 
 ## Keep-alive and Heartbeat Considerations
@@ -391,6 +399,8 @@ additional data.
 
 
 ## RTCP Considerations
+
+### NACK Considerations
 
 
 
