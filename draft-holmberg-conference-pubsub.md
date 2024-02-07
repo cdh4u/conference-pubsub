@@ -249,6 +249,61 @@ Network Time Protocol (NTP): The absolute time in seconds relative to midnight U
 
 # Conference Considerations {#sec-conf-considerations}
 
+This Section describes the major differences between an AV Conference and a PubSub Conference. The Section does not only focus on technical aspects, but also on traffic patterns and Conference Participant behaviors
+
+### Conference Duration
+
+The duration of an AV Conference is typically relatively short (between minutes and hours), and is often pre-determined. For example, when humans are invited to an AV Conference the invitation often indicates the planned duration of the Conference.
+
+The duration of a PubSub Conference can be very long, even infinite. MORE.
+
+### Sending and Receiving
+
+
+### Simultanous Senders
+
+Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data. 
+
+TODO: Describe different ways for forwarding/mixing Pub/Sub data.
+
+
+### Data Sending Frequency
+
+In an AV Conference, audio and video data is typically sent constantly, eventhough there are ways to temporarily stop the sending of data (e.g., by turning off the camera, muting the microphone etc).
+
+In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc. 
+
+
+### Time and Synchronization
+
+In an AV Conference, it is important that the receivers (Conference Server and participants) are able to synchronize (lip synch) the audio and video. However, it is typically not that important to know the exact time when audio and video data has been generated.
+
+In a PubSub Conference, the broker will typically not synchronize data published from different Publishers. However, Subscribers might need to know the exact time when Published data has been sampled.
+
+#### RTP Timestamp
+
+The RTP Timestamp, together with the RTCP SR (Sending Report) can be used by Conference servers and participants to synchronize audio and video received from multiple participants.
+
+Note that the RTCP SR messages might be terminated by the Conference server.
+
+Google RTP extension
+
+##### Payload
+
+In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp. 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## RFC 4103 Consierations {#sec-conf-considerations-4103}
@@ -280,12 +335,18 @@ Note that, if there is no new text to send, an RTP packet that only contains red
 
 
 
-
 ## RFC 9071 Considerations {#sec-conf-considerations-9071}
+
+
+
+
+
 
 https://www.rfc-editor.org/rfc/rfc9071.txt
 
 {{!RFC9071}} provides guidance on mixing of real-time text (RTT) by a conference server.
+
+
 
 
 
@@ -297,6 +358,12 @@ As described in Section 3.1, in RTT conferences typically only one participant w
 
 
 Within a Publish/Subscribe network, the data publishing interval can vary widely, depending on the use-case. In some constrained environements, a Publisher may publish data e.g., once a day, while in an industrial environment a Publisher may publish data all the time, with a very short publishing interval.
+
+
+
+### Sending vs Receiving
+
+In an AV Conference, human participants typically both send and receive media. This can also be the case in a PubSub Conference, if the Publish/Subscribe traffic pattern is used to realize two-way communication between conference participants. However, often PubSub Conference participants will either send (Publish) or receive (Subscribe) data. For example, sensors will typically only publish data.
 
 
 
