@@ -105,7 +105,7 @@ While RTP is a generic transport protocol, the main usage has been for transport
 
 ## Publish/Subscribe
 
-Publish/Subscribe (PubSub) 
+Publish/Subscribe (PubSub)
 
 
 When a publisher publishes data it associates it with a topic. The topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publsiher (e.g., "water-pump-123"). The structure and syntaxof the topic depends on the Pub/Sub framework. Some PubSub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.
@@ -161,7 +161,7 @@ Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather re
 
 {::boilerplate bcp14-tagged}
 
-This document uses the SIP conference terminology defined in {{!RFC4353}}. 
+This document uses the SIP conference terminology defined in {{!RFC4353}}.
 
 Publish/Subscribe (PubSub):
 : A message communication model where messages associated with specific topics are sent to a broker. Interested parties, i.e. subscribers, receive these topic-based messages from the broker without the original sender knowing the recipients. The broker handles matching and delivering these messages to the appropriate subscribers.
@@ -201,7 +201,7 @@ NOTE: There are more and more use-cases where both AudioVisual data and non-Audi
 AudioVisual Data:
 : Data that contains encoded audio or video.
 
-Network Time Protocol (NTP): The absolute time in seconds relative to midnight UTC on 1 January 1900. 
+Network Time Protocol (NTP): The absolute time in seconds relative to midnight UTC on 1 January 1900.
 
 
 
@@ -220,7 +220,7 @@ The duration of a PubSub Conference can be very long, even infinite. MORE.
 
 ### Simultanous Senders
 
-Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data. 
+Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data.
 
 TODO: Describe different ways for forwarding/mixing Pub/Sub data.
 
@@ -234,7 +234,7 @@ Within a PubSub Conference, the number of participants might vary throughout the
 
 In an AV Conference, audio and video data is typically sent constantly, eventhough there are ways to temporarily stop the sending of data (e.g., by turning off the camera, muting the microphone etc).
 
-In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc. 
+In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc.
 
 
 ### Data Synchronization
@@ -254,7 +254,7 @@ Google RTP extension
 
 ##### Payload
 
-In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp. 
+In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp.
 
 
 
@@ -316,7 +316,7 @@ https://www.rfc-editor.org/rfc/rfc9071.txt
 
 ### Simultanous Senders
 
-As described in Section 3.1, in RTT conferences typically only one participant writes and sends text (at least long pieces of text) at any given time. Within a Publish/Subscribe network, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data. 
+As described in Section 3.1, in RTT conferences typically only one participant writes and sends text (at least long pieces of text) at any given time. Within a Publish/Subscribe network, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data.
 
 ### Sending Frequency
 
@@ -333,7 +333,7 @@ In an AV Conference, human participants typically both send and receive media. T
 
 
 
-Received Real-time text is often read by humans. Because of that, it is important that text that was sent simultaneously by different senders is also received at the simultanelusly by the receivers. 
+Received Real-time text is often read by humans. Because of that, it is important that text that was sent simultaneously by different senders is also received at the simultanelusly by the receivers.
 
  RTP-mixer-based method for multiparty-aware endpoints:
 
@@ -426,7 +426,7 @@ NOTE: The mechansims used by a PubSub Conference server to determine the constra
 
 
 
-In case of translation, the original SSRC and the Timestamp will not be replaced by the translator. 
+In case of translation, the original SSRC and the Timestamp will not be replaced by the translator.
 
 
 ### Mixing
@@ -474,7 +474,7 @@ https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrex
 
 
 
-NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers 
+NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers
 
 
 # SIP Considerations {#sec-sip-considerations}
