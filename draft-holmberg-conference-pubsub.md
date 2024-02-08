@@ -433,7 +433,7 @@ In case of translation, the original SSRC and the Timestamp will not be replaced
 
 
 
-In an RTP packet, the Timestamp value typcially indicates when the payload data has been sampled. The exact details depends on the media type and payload format. 
+In an RTP packet, the Timestamp value typcially indicates when the payload data has been sampled. The exact details depends on the media type and payload format.
 
 In case of mixing, the conference server will insert its own SSRC and Timestamp in the outgoing RTP packets with the mixed media. While the CSRC field can provide the SSRCs of the RTP packets used to create the mix, the Timestamp values will be lost. In a Publish/Subscribe scenarios, if the Subscribers need to know when data has been published, they cannot rely on getting that information from RTP.
 
@@ -445,7 +445,7 @@ POTENTIAL STANDARDIZATION WORK: Add data sampling timestamp to RTP
 
 ## Single vs multiple RTP sessions
 
-An RTP Stream is identified by the data source (SSRC). 
+An RTP Stream is identified by the data source (SSRC).
 
 
 Within a PubSub Conference, the number of publishers might be very large. In addition, the number of publsihers might vary quite frequently, as publishers join and leave the PubSub Conference. For that reason, it is not convenient for a subscriber to negotiate a separate RTP session for each publisher with the conference server. In addtion, one of the ideas behind the Publish/Subscribe pattern is that a Subscriber does not need to know, or be impacted, based on the number of Publsihers.
@@ -453,9 +453,9 @@ Within a PubSub Conference, the number of publishers might be very large. In add
 
 In the case of real-time text, receivers need to be able to identify the sender of each RTP packet, so that the text from all senders is not mixed togheter.
 
-In some PubSub Conferences, Subscribers might not need to know which Publisher has published a specific set of data. 
+In some PubSub Conferences, Subscribers might not need to know which Publisher has published a specific set of data.
 
-However, the SSRC 
+However, the SSRC
 
 
 ## Sender Timestamp
@@ -503,7 +503,7 @@ A participant can use SDP 'inactive' attribute to indicate that it is not acting
 
 ### Conference creation
 
-An AV conference is typically created either by one of the participants, or by a contralized function tool. 
+An AV conference is typically created either by one of the participants, or by a contralized function tool.
 
 ### Conference duration and termination
 
@@ -513,7 +513,7 @@ The interest for a PubSub topic might last for a very long time. Because of that
 
 ## Join existing conference
 
-A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI. 
+A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.
 
 It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code {{!RFC3261}}) or simply add the endpoint to the existing conference.
 
@@ -545,7 +545,7 @@ In the case of non-AV data, the default behavior within a PubSub Conference is t
 ~~~~
 {: #fig-arch title='PubSub Conference Data Forwarding' artwork-align="center"}
 
-As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers. 
+As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers.
 
 
 For example, if the Broker receives data in a SenML Record from Publisher A and Publisher B at the same time it might choose to place and forward the SenML Records in a SenML Pack.
@@ -584,8 +584,7 @@ SenML Pack forwarded by the Broker towards the Subscribers:
 
 ## SIP Event Package for Conference State
 
-{{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the 
- onference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.
+{{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.
 
 ### Extensions for PubSub
 
@@ -597,7 +596,7 @@ The "maximum-user-count" element is used to indicate the maximum number of confe
  
 While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.
 
-This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that. 
+This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.
 
 ~~~~ aasvg
 
@@ -674,7 +673,7 @@ For example, resolution can refer to how often the publisher is sending data. Th
 For example, resolution can refer to the amount of data (e.g., netadata) that a publisher in sending.
 
 
-A publisher can publish the same data using different "resolutions". 
+A publisher can publish the same data using different "resolutions".
 
 ### Retransmission
 
@@ -699,7 +698,7 @@ Multiple data packets are used to create a single FEC packet. The FEC payload co
 
 ## RTCP FB
 
-The RTCP Feedback (FB) {{!RFC4585}} 
+The RTCP Feedback (FB) {{!RFC4585}}
 
 
 
