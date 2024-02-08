@@ -4,8 +4,8 @@
 
 Network Working Group                                        C. Holmberg
 Internet-Draft                                                  Ericsson
-Intended status: Informational                          18 December 2023
-Expires: 20 June 2024
+Intended status: Informational                           8 February 2024
+Expires: 11 August 2024
 
 
     Session Initiation Protocol (SIP) Conference Server for Publish/
@@ -45,11 +45,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 June 2024.
+   This Internet-Draft will expire on 11 August 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -63,25 +63,143 @@ Copyright Notice
 
 Table of Contents
 
-   1.  Introduction
-   2.  Conventions and Definitions
-   3.  Security Considerations
-   4.  IANA Considerations
-   5.  Normative References
+   1.  Terminology
+   2.  Introduction
+     2.1.  Publish/Subscribe
+   3.  Conventions and Definitions
+   4.  Conference Considerations
+     4.1.  Conference Duration
+       4.1.1.  Sending and Receiving
+       4.1.2.  Simultanous Senders
+       4.1.3.  Number of Conference Participants
+       4.1.4.  Data Sending Frequency
+       4.1.5.  Data Synchronization
+     4.2.  RFC 4103 Consierations
+       4.2.1.  Redundancy
+       4.2.2.  Packet Loss Detection
+       4.2.3.  Idle Period
+     4.3.  RFC 9071 Considerations
+       4.3.1.  Simultanous Senders
+       4.3.2.  Sending Frequency
+       4.3.3.  Sending vs Receiving
+     4.4.  RTP Non-Conference Considerations
+       4.4.1.  RTP Retransmission Payload Format (IETF RFC 4588)
+       4.4.2.  RTP Payload for Redundant Audio Data (IETF RFC 2198)
+       4.4.3.  An RTP Payload Format for Generic Forward Error
+               Correction (IETF RFC 2733)
+       4.4.4.  RTP Payload Format for Flexible Forward Error
+               Correction (FEC) (IETF RFC 8627)
+     4.5.  Time Considerations
+     4.6.  Keep-alive and Heartbeat Considerations
+     4.7.  RTCP Considerations
+       4.7.1.  NACK Considerations
+     4.8.  RTP Mixing or Translating
+       4.8.1.  Translating
+       4.8.2.  Mixing
+     4.9.  Single vs multiple RTP sessions
+     4.10. Sender Timestamp
+   5.  SIP Considerations
+   6.  SIP Subject Header Field
+   7.  SDP Considerations
+     7.1.  SDP Direaction Attribute
+   8.  SIP Conference Considerations
+     8.1.  Conference lifecycle
+       8.1.1.  Conference creation
+       8.1.2.  Conference duration and termination
+     8.2.  Join existing conference
+     8.3.  Data Mixing
+   9.  SIP Event Package Considerations
+     9.1.  SIP Event Package for Conference State
+       9.1.1.  Extensions for PubSub
+     9.2.  SIP Event Package for PublishSubscribe
+     9.3.  XML Schema
+     9.4.  Example
+   10. RTP Considerations
+     10.1.  RTP Payload Type (PT) for PubSub
+     10.2.  RTP Header Marker Bit
+     10.3.  RTP Extensions for PubSub
+       10.3.1.  Simulcast and Resolution
+       10.3.2.  Retransmission
+   11. RTCP Considerations
+     11.1.  RTCP FB
+   12. Standardization Considerations
+   13. Security Considerations
+   14. IANA Considerations
+   15. Normative References
    Acknowledgments
    Author's Address
 
-1.  Introduction
+1.  Terminology
+
+   Synchronization source (SSRC): The source of a stream of RTP packets,
+   identified by a 32-bit numeric SSRC identifier carried in the RTP
+   header so as not to be dependent upon the network address.  All
+   packets from a synchronization source form part of the same timing
+   and sequence number space, so a receiver groups packets by
+   synchronization source for playback.  Examples of synchronization
+   sources include the sender of a stream of packets derived from a
+   signal source such as a microphone or a camera, or an RTP mixer.  A
+   synchronization source may change its data format, e.g., audio
+   encoding, over time.  The SSRC identifier is a randomly chosen value
+   meant to be globally unique within a particular RTP session.  A
+   participant need not use the same SSRC identifier for all the RTP
+   sessions in a multimedia session; the binding of the SSRC identifiers
+   is provided through RTCP.  If a participantgenerates multiple streams
+   in one RTP session, for example from separate video cameras, each
+   MUST be identified as a different SSRC.
+
+   Contributing source (CSRC): A source of a stream of RTP packetsthat
+   has contributed to the combined stream produced by an RTP mixer.  The
+   mixer inserts a list of the SSRC identifiers of the sources that
+   contributed to the generation of a particular packet into the RTP
+   header of that packet.  This list is called the CSRC list.  An
+   example application is audio conferencing where a mixer indicates all
+   the talkers whose speech was combined to produce the outgoing packet,
+   allowing the receiver to indicate the current talker, even though all
+   the audio packets contain the same SSRC identifier (that of the
+   mixer).
+
+   Mixer: An intermediate system that receives RTP packets from one or
+   more sources, possibly changes the data format, combines the packets
+   in some manner and then forwards a new RTP packet.  Since the timing
+   among multiple input sources will not generally be synchronized, the
+   mixer will make timing adjustments among the streams and generate its
+   own timing for the combined stream.  Thus, all data packets
+   originating from a mixer will be identified as having the mixer as
+   their synchronization source.
+
+   Translator: An intermediate system that forwards RTP packets with
+   their synchronization source identifier intact.  Examples of
+   translators include devices that convert encodings without mixing,
+   replicators from multicast to unicast, and application-level filters
+   in firewalls.
+
+       0                   1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                           timestamp                           |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |           synchronization source (SSRC) identifier            |
+      +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+      |            contributing source (CSRC) identifiers             |
+      |                             ....                              |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                        Figure 1: RTP Packet Header
+
+2.  Introduction
 
    This document describes how a Session Initiation Protocol (SIP)
-   Conference Server can be used to realize a Publish/Subscribe (PubSub)
-   broker to distribute non-audiovisual data.
+   [RFC3261] Conference Server can be used to realize a Publish/
+   Subscribe (PubSub) broker to distribute non-audiovisual data.
 
    One main advantage of the solution is the possibility to use existing
    RTP-based audiovisual conferencing infrastructure and protocols to
    realize data distributing using the Publish/Subscribe traffic
-   pattern, instead of using dedicated Publish/Subscribe infrastructure
-   and protocols.
+   pattern, instead of using dedicated Publish/Subscribe frameworks and
+   protocols.
 
    NOTE: SIP Conference servers might behave differently depending on
    configuration, profiles etc.  The procedures in this document are
@@ -89,10 +207,78 @@ Table of Contents
 
    NOTE: The examples in this document use the RTP T.140 real-time text
    (RTT) payload format to transport the payload data, and SenML to
-   structure and encode the payload data.  Other mechanisms can also be
-   used.
+   structure and encode the payload data.  Other payload formats and
+   encodings can also be used.
 
-2.  Conventions and Definitions
+   While RTP is a generic transport protocol, the main usage has been
+   for transport of real-time AudioVisual data.  Non-AudioVisual data
+   has typically been data associated with AudioVisual data, e.g., real-
+   time text (rtt), DTMF signals.  However, at the time of writing this
+   document, IETF is working on a number of specifications where RTP is
+   used to transport other types of non-AV data.
+
+2.1.  Publish/Subscribe
+
+   Publish/Subscribe (PubSub)
+
+   When a publisher publishes data it associates it with a topic.  The
+   topic typcially describes the semantics of the data (e.g., "water-
+   temperature-data") or identifies the publsiher (e.g., "water-pump-
+   123").  The structure and syntaxof the topic depends on the Pub/Sub
+   framework.  Some PubSub frameworks define tree-structured topics
+   (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding
+   (e.g., "factory/temperature/*").  This document does not define topic
+   syntax or structure.  Topics are simply seen as token or string
+   values.
+
+   Subscribers that are interested in data assocoated with the topic
+   will subscribe to the topic.  The Pub/Sub framework will then route
+   published data to each subscriber that has subscribed to the topic.
+   The subscriptions and routing of published data is often handled by
+   an intermediary function, often called a broker.  Publishers will
+   publish data to the broker, and the broker will forward the data to
+   each subscriber that has subscribed to the topic associated with the
+   data.
+
+   Many Pub/Sub frameworks.
+
+   Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub),
+   but rather relies on other mechanisms (e.g., IP multicast) to route
+   published messages from publishers to subscribers.  Broker-less Pub/
+   Sub is outside the scope of this document.
+
+        .-----------.          .----------.  subscribe  .------------.
+        |           |   data   |          |<------------+            |
+        | Publisher +--------->+          |    data     | Subscriber |
+        |           |          |          +------------>|            |
+        '-----------'          |          |             '------------'
+             ...               |  Broker  |                ...
+             ...               |          |                ...
+        .-----------.          |          |  subscribe  .------------.
+        |           |   data   |          |<------------+            |
+        | Publisher +--------->+          |    data     | Subscriber |
+        |           |          |          +------------>|            |
+        '-----------'          '----------'             '------------'
+
+                  Figure 2: Publish/Subscribe Architecture
+
+   => 0.01 GET
+      Uri-Path: ps
+      Uri-Path: h9392
+
+   <= 2.05 Content
+      Content-Format: TBD2 (application/core-pubsub+cbor)
+      {
+         "topic-name" : "living-room-sensor",
+         "topic-data" : "ps/data/1bd0d6d",
+         "resource-type": "core.ps.conf",
+         "media-type": "application/senml-cbor",
+         "topic-type": "temperature",
+         "expiration-date": "2023-04-00T23:59:59Z",
+         "max-subscribers": 100
+      }
+
+3.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
@@ -100,25 +286,865 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Security Considerations
+   This document uses the SIP conference terminology defined in
+   [RFC4353].
+
+   Publish/Subscribe (PubSub):  A message communication model where
+      messages associated with specific topics are sent to a broker.
+      Interested parties, i.e. subscribers, receive these topic-based
+      messages from the broker without the original sender knowing the
+      recipients.  The broker handles matching and delivering these
+      messages to the appropriate subscribers.
+
+   Publisher:  A xxx.  Within the scope of this document, a Publisher is
+      a conference participant that sends data towards a conference
+      server using RTP.
+
+   Subscribe:  A xxx.  Within the scope of this document, a Subscriber
+      is a conference participant that receives data from a conference
+      server using RTP.
+
+   NOTE: A conference participant might act both as Publisher and
+   Subscriber.
+
+   Topic:  A xxx.  A Topic typically refers to the semantic of the
+      published data (e.g., 'water-temperature'), but it might also
+      refer to the Publisher (e.g., 'water-pump-123') or a combination
+      (e.g., 'water-pump-123/water-temperature').  Topics might also
+      have a tree structure (e.g., 'factory/line-2/water-pump-123/water-
+      temperature'), or allow wildcarding (e.g., 'factory/line-2/water-
+      pump-123/*').  Some systems might use a standardized naming scheme
+      and structure for the Topics, while other systems allow
+      applications to define their own Topic namings and structures.
+      This document does not mandate or define a specific naming or
+      structure for Topcis, and the Topics shown examples are only
+      examples.
+
+   Broker:  An intermediary function that receives published data from
+      Publishers, and forwards it to Subscribers.  Within the scope of
+      this document, the Broker is a conference server that supports
+      SIP/SDP signalling and RTP data transport.  Note that even if
+      other signalling protocols than SIP/SDP are used, the RTP and data
+      handling considerations within this document might still apply.
+
+   Published data  Data that a Publisher sends (publishes), and a
+      Subscriber receives, for a Topic.  Within the scope of this
+      document, the published data is the RTP payload [RFC3550], i.e.,
+      the data transported in an RTP packet.
+
+   Conference:  A xxx
+
+   AudioVisual Conference/AV Conference:  A "traditional" SIP
+      conference, where human participants send and receive speech
+      audio, and in some cases video.  The conference server has
+      different policies for distributing audio and video.  In a typcial
+      sceanio it mixes and forwards the audio of all participants, while
+      forwarding the video of the currently speaking conference
+      participant (referred to as "current speaker").
+
+   PubSub Conference:  A SIP conference used to realize data
+      distribution using the Publish/Subscribe traffic pattern,
+      following the procedures in this document.
+
+   PubSub Conference Participant/PubSub Participant:  An endpoint that
+      has joined (or is about to join) a PubSub Conference.  Within the
+      PubSub Conference, the PubSub Participant will take the role as a
+      Publisher, Subscriber or both.
+
+   NOTE: There are more and more use-cases where both AudioVisual data
+   and non-AudioVisual data is exchanged within the same conference.
+   The description of a mixed AudioVisual/PubSub conference is outside
+   the scope of this document.
+
+   AudioVisual Data:  Data that contains encoded audio or video.
+
+   Network Time Protocol (NTP): The absolute time in seconds relative to
+   midnight UTC on 1 January 1900.
+
+4.  Conference Considerations
+
+   This Section describes the major differences between an AV Conference
+   and a PubSub Conference.  The Section does not only focus on
+   technical aspects, but also on traffic patterns and Conference
+   Participant behaviors
+
+4.1.  Conference Duration
+
+   The duration of an AV Conference is typically relatively short
+   (between minutes and hours), and is often pre-determined.  For
+   example, when humans are invited to an AV Conference the invitation
+   often indicates the planned duration of the Conference.
+
+   The duration of a PubSub Conference can be very long, even infinite.
+   MORE.
+
+4.1.1.  Sending and Receiving
+
+4.1.2.  Simultanous Senders
+
+   Within an AV Conference typically only one participant sends speech
+   audio at any given time.  Within a PubSub Conference, multiple
+   Publishers might publish data simultaneously, as data is often
+   published as soon as it becomes available, depending on how time-
+   critical the data is.  In addition, Publishers typically have no idea
+   when other Publishers are publishing data.  Publishers might not even
+   be aware of the other Publishers.  Because of this, the Broker might
+   receive published data from multiple Publishers simultaneously.  If
+   the Broker is not able to simultaneously forward all published data,
+   it will have to buffer the data.
+
+   TODO: Describe different ways for forwarding/mixing Pub/Sub data.
+
+4.1.3.  Number of Conference Participants
+
+   Within an AV Conference, the number of participants is relatively
+   constant throughout the lifetime of the conference.  The number of
+   participants might also be known before the conference begins, e.g.,
+   based on the number of participants that have accepted an invitation
+   to the conference.
+
+   Within a PubSub Conference, the number of participants might vary
+   throughout the lifetime of the conference.  A Publisher might
+   participate in the conference only when it is publishing data.  The
+   duration of a PubSub Conference might also be much longer than the
+   duration of an AV Conference (see section XXX).
+
+4.1.4.  Data Sending Frequency
+
+   In an AV Conference, audio and video data is typically sent
+   constantly, eventhough there are ways to temporarily stop the sending
+   of data (e.g., by turning off the camera, muting the microphone etc).
+
+   In a PubSub Conference, the data publishing frequency can vary
+   widely.  In some cases, a Publisher will publish data very frequently
+   (measured in milliseconds).  In other cases, a Publisher might
+   publish data more seldom: once a minute, once an hour, once a day,
+   etc.
+
+4.1.5.  Data Synchronization
+
+   Within an AV Conference, if the conference server is mixing the audio
+   from all participants, the conference server needs to be able to
+   ensure that the audio packets that are mixed together have been
+   generated at the same time.  The conference server does not
+   necessarily need to know that real clock value, only that the packets
+   have been generated at the same time.
+
+   Within a PubSub Conference, the conference server will not mix data
+   from different Publishers.  In some case, for network optimization
+   purpose, the conference server might forward data from multiple
+   Publishers in a single packet towards the Subscribers.
+
+4.1.5.1.  RTP Timestamp
+
+   The RTP Timestamp, together with the RTCP SR (Sending Report) can be
+   used by Conference servers and participants to synchronize audio and
+   video received from multiple participants.
+
+   Note that the RTCP SR messages might be terminated by the Conference
+   server.
+
+   Google RTP extension
+
+4.1.5.1.1.  Payload
+
+   In this case, the sampling timestamp is carried in the payload data,
+   instead of the RTP/RTCP packets.  The disadvantage of this mechanim
+   is that one needs to ensure that the data payload format always
+   supports the transport of the sampling timestamp.
+
+4.2.  RFC 4103 Consierations
+
+   https://datatracker.ietf.org/doc/html/rfc4103
+
+   [RFC4103] defines an RTP payload format ('text/t140') to transport
+   T.140 real-time text.  Within this document, it is assumed that the
+   t140 payload format is used in the RTP packets to transport the
+   published data.  The reason for this is the possibility to re-use
+   existing conference servers that support the payload format to
+   realize the Broker.
+
+4.2.1.  Redundancy
+
+   https://datatracker.ietf.org/doc/html/rfc2198
+
+   By default, when no other redundancy mechanism is supported, the
+   usage of the redundancy mechanism defined in [RFC2198] is required,
+   unless the network conditions can guarantee that all text will always
+   be delivered from the sender to the receiver.  Additional mechanisms,
+   e.g., Forward Error Correction (FEC) [RFC2733] might also be used.
+
+   In a Publish/Subscribe network, the data delivery requirements will
+   determine whether redundancy or error correction mechanism are
+   needed.  In some cases, data loss might be toleraded, while in other
+   cases there might be requirements that all published data reaches
+   each Subscriber that has subscribed to the Topic of the data.
+
+4.2.2.  Packet Loss Detection
+
+   As t140 packets are only sent when there is new text to send.
+   Because of that, as the time between sent packets may vary, the
+   Timestamp cannot be used by a receiver to detect packet loss.
+   Instead, the Sequence Number (SN) is used to detect packet loss.
+
+   Note that, if there is no new text to send, an RTP packet that only
+   contains redundant data might be sent.  This can be useful to e.g.,
+   maintain NAT bindings, and as a generic heartbeat mechanism to
+   indicate that the sender is still alive.
+
+4.2.3.  Idle Period
+
+   [RFC9071] gives guidance on how to process real-time text in a
+   conference server.
+
+4.3.  RFC 9071 Considerations
+
+   https://www.rfc-editor.org/rfc/rfc9071.txt
+
+   [RFC9071] provides guidance on mixing of real-time text (RTT) by a
+   conference server.
+
+4.3.1.  Simultanous Senders
+
+   As described in Section 3.1, in RTT conferences typically only one
+   participant writes and sends text (at least long pieces of text) at
+   any given time.  Within a Publish/Subscribe network, multiple
+   Publishers might publish data simultaneously, as data is often
+   published as soon as it becomes available, depending on how time-
+   critical the data is.  In addition, Publishers typically have no idea
+   when other Publishers are publishing data.  Publishers might not even
+   be aware of the other Publishers.  Because of this, the Broker might
+   receive published data from multiple Publishers simultaneously.  If
+   the Broker is not able to simultaneously forward all published data,
+   it will have to buffer the data.
+
+4.3.2.  Sending Frequency
+
+   Within a Publish/Subscribe network, the data publishing interval can
+   vary widely, depending on the use-case.  In some constrained
+   environements, a Publisher may publish data e.g., once a day, while
+   in an industrial environment a Publisher may publish data all the
+   time, with a very short publishing interval.
+
+4.3.3.  Sending vs Receiving
+
+   In an AV Conference, human participants typically both send and
+   receive media.  This can also be the case in a PubSub Conference, if
+   the Publish/Subscribe traffic pattern is used to realize two-way
+   communication between conference participants.  However, often PubSub
+   Conference participants will either send (Publish) or receive
+   (Subscribe) data.  For example, sensors will typically only publish
+   data.
+
+   Received Real-time text is often read by humans.  Because of that, it
+   is important that text that was sent simultaneously by different
+   senders is also received at the simultanelusly by the receivers.
+
+   RTP-mixer-based method for multiparty-aware endpoints:
+
+   [RFC9071] makes assumptions regarding how participant are sending
+   text.  It assumes that in a typcial scenario only one participant
+   will send text at any given time.  In a PubSub Conference, the same
+   assumption cannot be done, as multiple publisher might
+   simulateneously publish data to the same topic.  In addition, unless
+   a publisher also acts as a subscriber, it does not even know when and
+   if other publishers are publishing data.
+
+   [RFC9071] focuses on two mixing solutions: 'The RTP-Mixer-Based
+   Solution for Multiparty-Aware Endpoints' (Section 2.2) and 'Mixing
+   for Multiparty-Unaware Endpoints (Section 2.3)'.
+
+   In the 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints'
+   solution, the receivers will receive the text from all senders within
+   a single RTP stream from the conference server.
+
+4.4.  RTP Non-Conference Considerations
+
+   While the scope of this document is how a conference server can be
+   used to realize a Publish/Subscribe Broker, this Section gives a
+   short overview on how existing RTP extensions can be used for non-AV
+   data.
+
+4.4.1.  RTP Retransmission Payload Format (IETF RFC 4588)
+
+   https://datatracker.ietf.org/doc/html/rfc4588
+
+4.4.2.  RTP Payload for Redundant Audio Data (IETF RFC 2198)
+
+   https://datatracker.ietf.org/doc/html/rfc2198
+
+   QUESTION: Can the mechanism be used for non-audio data?
+
+4.4.3.  An RTP Payload Format for Generic Forward Error Correction (IETF
+        RFC 2733)
+
+   https://datatracker.ietf.org/doc/html/rfc2733
+
+   FEC is sent as a separate RTP stream.
+
+4.4.4.  RTP Payload Format for Flexible Forward Error Correction (FEC)
+        (IETF RFC 8627)
+
+   https://datatracker.ietf.org/doc/html/rfc8627
+
+4.5.  Time Considerations
+
+   In a Publish/Subscribe network, as publishers publish data
+   independently from each other, there is typically no need for
+   subscribers to syncrhonize or "lip-synch" the data.
+
+4.6.  Keep-alive and Heartbeat Considerations
+
+   In a non-AV PubSub Conference, Publishers might stay within a PubSub
+   conference for a long periods without publishing any data.
+   Subscribers will not publish any data at all.  There are a couple of
+   possible implications that must be considered: NAT binding keep-
+   alives and heartbeats (i.e., inform other PubSub Participants that a
+   PubSub Participant is still 'alive').  NAT binding keep-alives are
+   needed in cases where a PubSub Participants needs to send periodic
+   data in order to maintain NAT bindings between itself and the PubSub
+   Conference servers.  This is important for Subscribers, but also for
+   Publishers that publish data with very long intervals.
+
+   [RFC6263] describes different RTP/RTCP mechanisms to send NAT keep-
+   alives.
+
+   The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/
+   RTCP.  Instead, a participant will send an empty transport packet
+   (e.g., UDP packet).  Note that this mechanism is useful mainly for
+   NAT traversal purpose.  The conference server application will
+   typcially not be informed about these packets, and will not forward
+   the packets to other conference particiapants.  This mechanism is
+   applicable to non-AV data in PubSub Conferences.
+
+   The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific
+   RTP payload format for comfort noise [RFC3389].  The payload format
+   has been defined for audio data, and must be supported by both
+   senders and receivers.  Is not applicable for non-AV data in PubSub
+   conferences.
+
+   The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/
+   RTCP multiplexing, where the same 5-typle is used for the RTP and
+   RTCP packets.  When there is no data to be sent, an RTCP packet can
+   be sent as a keep-alive.  Note that Subscribers that do not send RTP
+   packets can still send RTCP packets.
+
+   The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with
+   Unknown Payload Type' mechanisms uses invalid with an unvalid RTP
+   version number respectively a RTP packet with a non-negotiated
+   payload type.  Receivers are expected to ignore and discard these
+   types of RTP packets.  This mechanism is applicable to non-AV data in
+   PubSub Conferences.
+
+   In an AV conference, most participants will typically both send and
+   receive data.  However, in a PubSub Conference many of the PubSub
+   Participants will only send data (Publihser) or receive data
+   (Subscriber).  However, eventhough a Subsriber does not publish any
+   data, it might still use the mechanisms above if needed, and a PubSub
+   Conference Server needs to be prepared to receive such RTP/RTCP
+   packets from both Publishers and Subscribers.
+
+   NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is
+   that Publishers and Subscribers do not need to be aware of each
+   other.  In such cases there is no need to use an end-to-end heartbeat
+   mechanism between Publishers and Subscribers.  Note that there might
+   still be a heartbeat mechanism used between Publishers/Subsribers and
+   the Broker.  However, there might be cases where Publishers and
+   Subscribers are tightly coupled, and where a heartbeat mechanism is
+   required.
+
+   NOTE: Some data formats might define their own methods for sending
+   heartbeats.  For example, there might a way to indicate that the
+   payload is only used for heartbeat purpose, and does not contain any
+   additional data.
+
+4.7.  RTCP Considerations
+
+4.7.1.  NACK Considerations
+
+4.8.  RTP Mixing or Translating
+
+   In an AV conference, the actual time when the AV data was created is
+   typcially not that important to the receiver.  It is more important
+   that the conference server is able to mix and lip-synch AV data that
+   has been created at the same time by the senders.
+
+4.8.1.  Translating
+
+   By default, when a Broker receives published data to a Topic, it
+   forwards the data to each Subscriber that has subscribed to the data,
+   without any processing of the data.
+
+   Aggregation: instead of forwarding each published data directly to a
+   Subscriber, the PubSub Conference server might choose to store the
+   published data in an aggregated manner, and forward all stored data
+   in a single RTP packet towards the Subscriber based on different
+   policies, e.g., depen
+
+   NOTE: The mechansims used by a PubSub Conference server to determine
+   the constraints (network bandwidth etc) of a Subscriber are outside
+   the scope of this document.
+
+   In case of translation, the original SSRC and the Timestamp will not
+   be replaced by the translator.
+
+4.8.2.  Mixing
+
+   In an RTP packet, the Timestamp value typcially indicates when the
+   payload data has been sampled.  The exact details depends on the
+   media type and payload format.
+
+   In case of mixing, the conference server will insert its own SSRC and
+   Timestamp in the outgoing RTP packets with the mixed media.  While
+   the CSRC field can provide the SSRCs of the RTP packets used to
+   create the mix, the Timestamp values will be lost.  In a Publish/
+   Subscribe scenarios, if the Subscribers need to know when data has
+   been published, they cannot rely on getting that information from
+   RTP.
+
+   POTENTIAL STANDARDIZATION WORK: In addition to contributing SSRCs,
+   also include contributing Timestamps.
+
+   POTENTIAL STANDARDIZATION WORK: Add data sampling timestamp to RTP
+
+4.9.  Single vs multiple RTP sessions
+
+   An RTP Stream is identified by the data source (SSRC).
+
+   Within a PubSub Conference, the number of publishers might be very
+   large.  In addition, the number of publsihers might vary quite
+   frequently, as publishers join and leave the PubSub Conference.  For
+   that reason, it is not convenient for a subscriber to negotiate a
+   separate RTP session for each publisher with the conference server.
+   In addtion, one of the ideas behind the Publish/Subscribe pattern is
+   that a Subscriber does not need to know, or be impacted, based on the
+   number of Publsihers.
+
+   In the case of real-time text, receivers need to be able to identify
+   the sender of each RTP packet, so that the text from all senders is
+   not mixed togheter.
+
+   In some PubSub Conferences, Subscribers might not need to know which
+   Publisher has published a specific set of data.
+
+   However, the SSRC
+
+4.10.  Sender Timestamp
+
+   RTP does not provide a mechanism to indicate the time when a packet
+   is sent, or when the RTP payload was sampled.
+
+   The following experimental RTP header extension to include the
+   absolute packet send time in an RTP packet:
+
+   https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-
+   code/rtp-hdrext/abs-send-time
+
+   https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-
+   code/rtp-hdrext/abs-capture-time/
+
+   NOTE: In addition to the RTP SSRC value, the data format used in the
+   RTP packet payload might have a source indicator that tells
+   Subscrbiers
+
+5.  SIP Considerations
+
+6.  SIP Subject Header Field
+
+   The SIP Subject header field can be used to indicate the PubSub Topic
+   associated with the PubSub Conference.
+
+7.  SDP Considerations
+
+7.1.  SDP Direaction Attribute
+
+   These attributes can be used to indicate the PubSub role of a
+   participant.
+
+   A participant can use SDP 'sendonly' attribute to indicate that it is
+   acting as a Publisher.
+
+   A participant can use SDP 'recvonly' attribute to indicate that it is
+   acting as a Subscriber.
+
+   A participant can use SDP 'sendrecv' attribute to indicate that it is
+   acting as both a Publisher and a Subscriber.
+
+   A participant can use SDP 'inactive' attribute to indicate that it is
+   not acting as a Publisher nor a Subscriber.  A participant can use
+   the attribute e.g., to temporary indicate to the conference server
+   that it does not want to receive data associated with the conference,
+   but also to indicate that it will not send data associated with the
+   conference.
+
+8.  SIP Conference Considerations
+
+8.1.  Conference lifecycle
+
+8.1.1.  Conference creation
+
+   An AV conference is typically created either by one of the
+   participants, or by a contralized function tool.
+
+8.1.2.  Conference duration and termination
+
+   The duration of an AV conference may vary, but is typcially measured
+   in minutes or hours.  An AV conference is typically terminated when
+   the last participant has left the conference.
+
+   The interest for a PubSub topic might last for a very long time.
+   Because of that, a PubSub conference associated with the topc might
+   last for days, months or "infinite".  While there might be times when
+   there are no PubSub participants within a conference, the conference
+   server might still keep the PubSub conference "alive", as new
+   participants are expected to join in the near future.  One advantage
+   of keeping the conference "alive" is that participants can use the
+   same conference URI whenever they are re-joining the conference.
+
+8.2.  Join existing conference
+
+   A conference server might host multiple conferences that share the
+   same conference name (Subject).  Since the name is just a human
+   readable string value, it is not uncommon that multiple AV
+   conferences share the same name.  Each conference will obviously have
+   a unique conference URI.
+
+   It is not practical to host multiple PubSub conferences that share
+   the same Topic.  Because of that, if a PubSub participant tries to
+   create a PubSub conference with a Topic for which there already exist
+   a conference, the conference server might choose to either reject the
+   conference creation request (and inform the endpoint about the
+   existing conference), redirect the participant to the existing
+   conference (using a SIP 3xx response code [RFC3261]) or simply add
+   the endpoint to the existing conference.
+
+8.3.  Data Mixing
+
+   The way a conference server depends on the media type.  In an AV
+   conference, the audio ... For example, all incoming audio data is
+   typically mixed together, so that everyone can hear everyone else.
+   In case of video, if the con the conference server typcially forwards
+   video stream of the participants currently spekakinh.
+
+   In the case of non-AV data, the default behavior within a PubSub
+   Conference is to forward the data from a PubSub Publisher to each
+   PubSub Subscriber, without performing any mixing or selection of what
+   data is forwarded.
+
+        .-----------.          .----------.             .------------.
+        |           |  data X  |          |             |            |
+        | Publisher +--------->+          |    data X   | Subscriber |
+        |           |          |          +------------>|            |
+        '-----------'          |          |             '------------'
+                               |  Broker  |                ...
+                               |          |                ...
+                               |          |             .------------.
+                               |          |             |            |
+                               |          |    data X   | Subscriber |
+                               |          +------------>|            |
+                               '----------'             '------------'
+
+                Figure 3: PubSub Conference Data Forwarding
+
+   As an optimization, if the Broker receives data from multiple
+   Publishers, it may forward data from multiple Publishers in a single
+   RTP payload towards the Subscribers.
+
+   For example, if the Broker receives data in a SenML Record from
+   Publisher A and Publisher B at the same time it might choose to place
+   and forward the SenML Records in a SenML Pack.
+
+       SenML Record from Publisher A:
+
+          [
+            {"n":"urn:dev:ow:10e2073a01080063","u":"Cel","v":23.1}
+          ]
+
+       SenML Record from Publisher B:
+
+          [
+            {"n":"urn:dev:ow:F0ea673a01000036","u":"Cel","v":25.7}
+          ]
+
+
+       SenML Pack forwarded by the Broker towards the Subscribers:
+
+          [
+            {"n":"urn:dev:ow:10e2073a01080063","u":"Cel","v":23.1},
+            {"n":"urn:dev:ow:F0ea673a01000036","u":"Cel","v":25.7}
+          ]
+
+                   Figure 4: SenML Pack created by broker
+
+9.  SIP Event Package Considerations
+
+9.1.  SIP Event Package for Conference State
+
+   [RFC4575] defines a SIP Event Package [RFC3265] for Conference State.
+   A conference participant can subscribe to the event package, and
+   retrieve conferance state information, including information about
+   the conference itsel, and information about other conference
+   participants.  For a PubSub conference, the "subject" child element
+   of the "conference-description" element can be used to indicate the
+   Topic associated with the conference.
+
+9.1.1.  Extensions for PubSub
+
+9.1.1.1.  Maximum Number of Conference Participants
+
+   The "maximum-user-count" element is used to indicate the maximum
+   number of conference participants.  For an AudioVisual conference,
+   where participants typcially both send and receive media a single
+   element will be enough.  However, in a PubSub conference, a majority
+   of the conference participants might be either subscribers or
+   publishers.  There might be a large variation in how many publishers
+   and how mnay subscribers a conference server is able to handle.
+   Therefore it could be useful to have separate elements to indicate
+   that, e.g., "maximum-user-count-publisher" and "maximum-user-count-
+   subscriber".
+
+9.2.  SIP Event Package for PublishSubscribe
+
+   While the SIP Event Package for Conference State provides information
+   and state information for a given conference, it does not provide
+   information about other conferences that are hosted by the conference
+   server.
+
+   This section suggests a new SIP Event Package, SIP Event Package for
+   PublishSubscribe.  The event package is not assoiciated with a
+   specific PubSub conference, but provides information about the PubSub
+   conferences hosted by the conference server.  For each PubSub
+   conference hosted by conference server, the event package contains
+   the conference URI and the associatd topic.  It might also contain
+   additional information about each PubSub conference.  In addition, if
+   the topic is associated with some namespace or dictionary, there
+   might be information about that.
+
+                     pubsub-conferences-info
+                          |
+                          |-- pubsub-conferences
+                               |-- pubsub-conference
+                               |    |-- conference-URI
+                               |    |-- topic
+                               |-- pubsub-conference
+                               .    |-- conference-URI
+                               .    |-- topic
+                               .
+
+              Figure 5: SIP Event Package for PublishSubscribe
+
+9.3.  XML Schema
+
+   TBD
+
+9.4.  Example
+
+   <?xml version="1.0" encoding="UTF-8"?>
+   <pubsub-conferences-info
+    xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"
+    entity="sips:confserver@example.com"
+    state="full" version="1">
+   <!--
+     PUBSUB CONFERENCES
+   -->
+    <pubsub-conferences>
+     <pubsub-conference entity="sip:pubsubconf123@example.com" state="full">
+      <topic>water temperature</topic>
+     </pubsub-conference>
+     <pubsub-conference entity="sip:pubsubconf456@example.com" state="full">
+      <topic>air temperature</topic>
+     </pubsub-conference>
+    </pubsub-conferences>
+   </pubsub-conferences-info>
+
+NOTE: The conference-uri is defined as an pubsub-conference element attribute. As an option, it could be defined as a separate element.
+
+NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
+
+      Figure 6: Example: SIP Event Package for PublishSubscribe
+
+10.  RTP Considerations
+
+10.1.  RTP Payload Type (PT) for PubSub
+
+10.2.  RTP Header Marker Bit
+
+   This document does not define usage of the RTP header Marker bit.
+
+10.3.  RTP Extensions for PubSub
+
+   A large number of RTP extensions have been specified for RTP.  Many
+   of the extensions have been specified with an AudioVisual use-case in
+   mind.  However, many of them can also be applied when RTP is used to
+   transport non-AudioVisual data.  While an extensive study of the
+   usage of RTP extensions for transport of non-AudioVisual data is
+   outside the scope of this document, this chapter describes a few
+   extensions that have been studied in the work that lead to this
+   document.
+
+10.3.1.  Simulcast and Resolution
+
+   While it is quite clear what "resolution" means for audio and video,
+   there is no unique definition for non-AV data.
+
+   For example, resolution can refer to the number of digits are
+   included when the payload contains numeric values.
+
+   For example, resolution can refer to how often the publisher is
+   sending data.  The more freuquent, the higher the resolution.
+
+   For example, resolution can refer to the amount of data (e.g.,
+   netadata) that a publisher in sending.
+
+   A publisher can publish the same data using different "resolutions".
+
+10.3.2.  Retransmission
+
+   The RTP header carries both a sequence number and a timestamp to
+   allow a receiver to distinguish between lost packets and periods of
+   time when no data was transmitted.
+
+   By default RTP provides unreliable transport.  The same applies to
+   different PubSub frameworks that use UDP as transport protocol.
+   However, some PubSub frameworks use TCP transport, or use other
+   mechanisms in order to provide reliable data delivery.  There are RTP
+   extension that have been used to provide reliable data delivery, or
+   to simply inform the sender that data has been lost.
+
+   XXX specifies an RTP extension where RTP packets are re-transmitted
+   by default.
+
+10.3.2.1.  Redundant Audio Data
+
+   [RFC2198] defines an RTP payload format for encoding redundant audio
+   data.  If a data packet is lost, it might be possible to reconstruct
+   the information of the lost packet from the redundant data that is
+   included in the subsequent packets.  The mechanism can also be used
+   for non-AV data.  However, in case of time-critical data, where the
+   lost data would be considered "expired" it it would arrive as
+   redundant data in a subsequent packet, the mechanism might not be
+   useful (unless for logging purpose etc).
+
+10.3.2.2.  Forward Error Detection (FEC)
+
+   [RFC2733]
+
+   Multiple data packets are used to create a single FEC packet.  The
+   FEC payload contains information which data packets have been used to
+   create the FEC packet.
+
+11.  RTCP Considerations
+
+11.1.  RTCP FB
+
+   The RTCP Feedback (FB) [RFC4585]
+
+12.  Standardization Considerations
+
+   This document does not formally standardize any new protocol
+   extensions, SIP event packages etc.  Each extension, event package
+   etc described in the document would need to be standardized following
+   the normal standardization procedures.  The protocol extensions and
+   event packages described in this document are collated and listed
+   below.
+
+   SIP Event Package for Conference State Section XXX Extension to the
+   event package for providing separate information about publishers and
+   subscribers.
+
+   SIP Event Package for PublishSubscribe Section XXX New SIP event
+   package for providing information about PubSub Conferences
+   (conference URI and topic) hosted by a Conference Server.
+
+13.  Security Considerations
 
    The Security Considerations for SIP Conferencing apply to this
    document.
 
-4.  IANA Considerations
+14.  IANA Considerations
 
    This document has no IANA actions.
 
-5.  Normative References
+15.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
+   [RFC2198]  Perkins, C., Kouvelas, I., Hodson, O., Hardman, V.,
+              Handley, M., Bolot, J.C., Vega-Garcia, A., and S. Fosse-
+              Parisis, "RTP Payload for Redundant Audio Data", RFC 2198,
+              DOI 10.17487/RFC2198, September 1997,
+              <https://www.rfc-editor.org/rfc/rfc2198>.
+
+   [RFC2733]  Rosenberg, J. and H. Schulzrinne, "An RTP Payload Format
+              for Generic Forward Error Correction", RFC 2733,
+              DOI 10.17487/RFC2733, December 1999,
+              <https://www.rfc-editor.org/rfc/rfc2733>.
+
+   [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
+              A., Peterson, J., Sparks, R., Handley, M., and E.
+              Schooler, "SIP: Session Initiation Protocol", RFC 3261,
+              DOI 10.17487/RFC3261, June 2002,
+              <https://www.rfc-editor.org/rfc/rfc3261>.
+
+   [RFC3264]  Rosenberg, J. and H. Schulzrinne, "An Offer/Answer Model
+              with Session Description Protocol (SDP)", RFC 3264,
+              DOI 10.17487/RFC3264, June 2002,
+              <https://www.rfc-editor.org/rfc/rfc3264>.
+
+   [RFC3265]  Roach, A. B., "Session Initiation Protocol (SIP)-Specific
+              Event Notification", RFC 3265, DOI 10.17487/RFC3265, June
+              2002, <https://www.rfc-editor.org/rfc/rfc3265>.
+
+   [RFC3389]  Zopf, R., "Real-time Transport Protocol (RTP) Payload for
+              Comfort Noise (CN)", RFC 3389, DOI 10.17487/RFC3389,
+              September 2002, <https://www.rfc-editor.org/rfc/rfc3389>.
+
+   [RFC3550]  Schulzrinne, H., Casner, S., Frederick, R., and V.
+              Jacobson, "RTP: A Transport Protocol for Real-Time
+              Applications", STD 64, RFC 3550, DOI 10.17487/RFC3550,
+              July 2003, <https://www.rfc-editor.org/rfc/rfc3550>.
+
+   [RFC4103]  Hellstrom, G. and P. Jones, "RTP Payload for Text
+              Conversation", RFC 4103, DOI 10.17487/RFC4103, June 2005,
+              <https://www.rfc-editor.org/rfc/rfc4103>.
+
+   [RFC4353]  Rosenberg, J., "A Framework for Conferencing with the
+              Session Initiation Protocol (SIP)", RFC 4353,
+              DOI 10.17487/RFC4353, February 2006,
+              <https://www.rfc-editor.org/rfc/rfc4353>.
+
+   [RFC4575]  Rosenberg, J., Schulzrinne, H., and O. Levin, Ed., "A
+              Session Initiation Protocol (SIP) Event Package for
+              Conference State", RFC 4575, DOI 10.17487/RFC4575, August
+              2006, <https://www.rfc-editor.org/rfc/rfc4575>.
+
+   [RFC4585]  Ott, J., Wenger, S., Sato, N., Burmeister, C., and J. Rey,
+              "Extended RTP Profile for Real-time Transport Control
+              Protocol (RTCP)-Based Feedback (RTP/AVPF)", RFC 4585,
+              DOI 10.17487/RFC4585, July 2006,
+              <https://www.rfc-editor.org/rfc/rfc4585>.
+
+   [RFC6263]  Marjou, X. and A. Sollaud, "Application Mechanism for
+              Keeping Alive the NAT Mappings Associated with RTP / RTP
+              Control Protocol (RTCP) Flows", RFC 6263,
+              DOI 10.17487/RFC6263, June 2011,
+              <https://www.rfc-editor.org/rfc/rfc6263>.
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8428]  Jennings, C., Shelby, Z., Arkko, J., Keranen, A., and C.
+              Bormann, "Sensor Measurement Lists (SenML)", RFC 8428,
+              DOI 10.17487/RFC8428, August 2018,
+              <https://www.rfc-editor.org/rfc/rfc8428>.
+
+   [RFC9071]  Hellström, G., "RTP-Mixer Formatting of Multiparty Real-
+              Time Text", RFC 9071, DOI 10.17487/RFC9071, July 2021,
+              <https://www.rfc-editor.org/rfc/rfc9071>.
 
 Acknowledgments
 
