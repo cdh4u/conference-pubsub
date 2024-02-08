@@ -134,7 +134,7 @@ Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather re
    |           |          |          +------------>|            |
    '-----------'          '----------'             '------------'
 ~~~~
-{: #fig-arch title='Publish/Subscribe Architecture' artwork-align="center"}
+{: #fig-arch-pubsub title='Publish/Subscribe Architecture' artwork-align="center"}
 
 
 ~~~~
@@ -542,7 +542,7 @@ In the case of non-AV data, the default behavior within a PubSub Conference is t
                           |          +------------>|            |
                           '----------'             '------------'
 ~~~~
-{: #fig-arch title='PubSub Conference Data Forwarding' artwork-align="center"}
+{: #fig-broker-forward title='PubSub Conference Data Forwarding' artwork-align="center"}
 
 As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers.
 
@@ -573,7 +573,7 @@ SenML Pack forwarded by the Broker towards the Subscribers:
    ]
 
 ~~~~
-{: #fig-arch title='SenML Pack created by broker' artwork-align="center"}
+{: #fig-senml-pack title='SenML Pack created by broker' artwork-align="center"}
 
 
 
@@ -611,7 +611,7 @@ pubsub-conferences-info
           .
 
 ~~~~
-{: #fig-arch title='SIP Event Package for PublishSubscribe' artwork-align="center"}
+{: #fig-sip-eventpackage-pubsub title='SIP Event Package for PublishSubscribe' artwork-align="center"}
 
 ## XML Schema
 
@@ -644,7 +644,7 @@ NOTE: The conference-uri is defined as an pubsub-conference element attribute. A
 NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
 
 ~~~~
-{: #fig-arch title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
+{: #fig-sip-pubsup-event title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
 
 
 # RTP Considerations
