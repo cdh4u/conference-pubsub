@@ -47,10 +47,9 @@ normative:
  RFC6263:
  RFC8428:
  RFC9071:
- 
+
 informative:
 
- 
 
 --- abstract
 
@@ -482,7 +481,7 @@ NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet 
 # SIP Subject Header Field {#sec-sip-considerations-subject}
 
 The SIP Subject header field can be used to indicate the PubSub Topic associated with the PubSub Conference.
- 
+
 # SDP Considerations {#sec-sdp-considerations}
 
 ## SDP Direaction Attribute {#sec-sdp-considerations-dir-attr}
@@ -593,7 +592,7 @@ SenML Pack forwarded by the Broker towards the Subscribers:
 The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher" and "maximum-user-count-subscriber".
 
 ## SIP Event Package for PublishSubscribe
- 
+
 While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.
 
 This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.
@@ -609,8 +608,8 @@ pubsub-conferences-info
           |-- pubsub-conference
           .    |-- conference-URI
           .    |-- topic
-          .    
-     
+          .
+
 ~~~~
 {: #fig-arch title='SIP Event Package for PublishSubscribe' artwork-align="center"}
 
