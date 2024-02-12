@@ -43,6 +43,7 @@ normative:
  RFC3550:
  RFC4353:
  RFC4575:
+ RFC4579:
  RFC4585:
  RFC6263:
  RFC8428:
@@ -207,37 +208,49 @@ Network Time Protocol (NTP): The absolute time in seconds relative to midnight U
 
 
 
-# Conference Considerations {#sec-conf-considerations}
+# Generic Conference Considerations {#sec-conf-considerations-generic}
 
-This Section describes the major differences between an AV Conference and a PubSub Conference. The Section does not only focus on technical aspects, but also on traffic patterns and Conference Participant behaviors
+This Section discusses the major differences between an AV Conference and a PubSub Conference.
+
+## Join Conference
+
+A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.
+
+It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code {{!RFC3261}}) or simply add the endpoint to the existing conference.
 
 ### Conference Duration
 
-The duration of an AV Conference is typically relatively short (between minutes and hours), and is often pre-determined. For example, when humans are invited to an AV Conference the invitation often indicates the planned duration of the Conference.
+The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.
 
-The duration of a PubSub Conference can be very long, even infinite. MORE.
+The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.
 
-### Sending and Receiving
+### Conference Termination
 
+An AV conference is typically terminated once the last participant leaves the conference, when the conference createer leaves the conference, or at a pre-configured clock time.
+
+Within a PubSub conference, participants might join the conference only when they want to send or receive data. In between they might leave the conference. Because of this there might be periods when there are no participants wihtin the conference. However, as participants might re-join later, and new participants might join the conference. Therefore, as long as it can be assumed that there is an interest in the Topic associated with the conference, the conference might be kept alive even if there are no participants.
+
+### Sending and Receiving Data
+
+Within an AV Conference, participants typically both send and receive media. This can also be the case in a PubSub Conference, if the Publish/Subscribe traffic pattern is used to realize bi-directional data exchange between conference participants. However, typically participants within a PubSub Conference will either send (Publish) or receive (Subscribe) data. For example, sensors will typically only publish data, while analyticsetc applications will only subscribe to data.
+
+Note that a PubSub Conference participant might publish data to one Topic, while subscribing to another Topic.
 
 ### Simultanous Senders
 
-Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data.
-
-TODO: Describe different ways for forwarding/mixing Pub/Sub data.
+Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available. In addition, a Publisher typically has no idea when other Publishers are publishing data. A Publishers might not even be aware of the other Publishers (if any). Because of this, the conference server might receive published data from multiple Publishers simultaneously. Depending on how quickly the conference server can forward the data to the subscribers it might have to buffer the data, which can cause delays.
 
 ### Number of Conference Participants
 
 Within an AV Conference, the number of participants is relatively constant throughout the lifetime of the conference. The number of participants might also be known before the conference begins, e.g., based on the number of participants that have accepted an invitation to the conference.
 
-Within a PubSub Conference, the number of participants might vary throughout the lifetime of the conference. A Publisher might participate in the conference only when it is publishing data. The duration of a PubSub Conference might also be much longer than the duration of an AV Conference (see section XXX).
+Within a PubSub Conference, the number of participants might vary widely throughout the lifetime of the conference. A Publisher might join a conference only when it is publishing data, then leave the conference and re-join later again. If a Subscriber is only interested in receiving data at specific times, it might also join the conference only for those time.
 
 ### Data Sending Frequency
 
 In an AV Conference, audio and video data is typically sent constantly, eventhough there are ways to temporarily stop the sending of data (e.g., by turning off the camera, muting the microphone etc).
 
 In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc.
-
 
 ### Data Synchronization
 
@@ -246,7 +259,115 @@ Within an AV Conference, if the conference server is mixing the audio from all p
 Within a PubSub Conference, the conference server will not mix data from different Publishers. In some case, for network optimization purpose, the conference server might forward data from multiple Publishers in a single packet towards the Subscribers.
 
 
-#### RTP Timestamp
+# SIP Signalling Considerations {#sec-conf-considerations-sip-signalling}
+
+The discussions within this Section are based on the procedures and concepts defined in {{!RFC4353}} and {{!RFC4579}}.
+
+## SIP Subject Header Field {#sec-conf-considerations-sip-subject}
+
+The SIP Subject header field can be used to indicate the Topic associated with the PubSub Conference. When a new new conference is created (using SIP signalling) the conference creator uses the Subject header field to indicate the Topic of the conference.
+
+~~~~ aasvg
+
+pubsub-conferences-info
+     |
+     |-- pubsub-conferences
+          |-- pubsub-conference
+          |    |-- conference-URI
+          |    |-- topic
+          |-- pubsub-conference
+          .    |-- conference-URI
+          .    |-- topic
+          .
+
+~~~~
+{: #fig-sip-subject title='SIP Subject header field for Topic' artwork-align="center"}
+
+
+# SDP Considerations {#sec-conf-considerations-sdp}
+
+## SDP Direaction Attribute {#sec-sdp-considerations-dir-attr}
+
+These attributes can be used to indicate the PubSub role of a participant.
+
+A participant can use SDP 'sendonly' attribute to indicate that it is acting as a Publisher.
+
+A participant can use SDP 'recvonly' attribute to indicate that it is acting as a Subscriber.
+
+A participant can use SDP 'sendrecv' attribute to indicate that it is acting as both a Publisher and a Subscriber.
+
+A participant can use SDP 'inactive' attribute to indicate that it is not acting as a Publisher nor a Subscriber. A participant can use the attribute e.g., to temporary indicate to the conference server that it does not want to receive data associated with the conference, but also to indicate that it will not send data associated with the conference.
+
+# SIP Event Package Considerations {#sec-conf-considerations-sip-event}
+
+This section describes extensions for the SIP Event Package for Conference State {{!RFC4575}} that are useful for a PubSub Conference. In addition, this section describes a new SIP Event Package, SIP Event Package for PublishSubscribe, that can be used to inform participants about the PubSub Conferences hosted by a conference server, e.g., the Topic and conference-uri associated with each conference.
+ 
+## SIP Event Package for Conference State {#sec-conf-considerations-sip-event-conf-state}
+
+{{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.
+
+### Extensions for PubSub
+
+#### Maximum Number of Conference Participants
+
+The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher" and "maximum-user-count-subscriber".
+
+## SIP Event Package for PublishSubscribe {#sec-conf-considerations-sip-event-pubsub}
+
+While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.
+
+This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.
+
+~~~~ aasvg
+
+pubsub-conferences-info
+     |
+     |-- pubsub-conferences
+          |-- pubsub-conference
+          |    |-- conference-URI
+          |    |-- topic
+          |-- pubsub-conference
+          .    |-- conference-URI
+          .    |-- topic
+          .
+
+~~~~
+{: #fig-sip-eventpackage-pubsub title='SIP Event Package for PublishSubscribe' artwork-align="center"}
+
+### Example
+
+~~~~ aasvg
+
+   <?xml version="1.0" encoding="UTF-8"?>
+   <pubsub-conferences-info
+    xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"
+    entity="sips:confserver@example.com"
+    state="full" version="1">
+   <!--
+     PUBSUB CONFERENCES
+   -->
+    <pubsub-conferences>
+     <pubsub-conference entity="sip:pubsubconf123@example.com" state="full">
+      <topic>water temperature</topic>
+     </pubsub-conference>
+     <pubsub-conference entity="sip:pubsubconf456@example.com" state="full">
+      <topic>air temperature</topic>
+     </pubsub-conference>
+    </pubsub-conferences>
+   </pubsub-conferences-info>
+
+NOTE: The conference-uri is defined as an pubsub-conference element attribute. As an option, it could be defined as a separate element.
+
+NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
+
+~~~~
+{: #fig-sip-pubsup-event title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
+
+
+
+## RTP Considerations {#sec-conf-considerations-rtp}
+
+### RTP Timestamp
 
 The RTP Timestamp, together with the RTCP SR (Sending Report) can be used by Conference servers and participants to synchronize audio and video received from multiple participants.
 
@@ -254,29 +375,44 @@ Note that the RTCP SR messages might be terminated by the Conference server.
 
 Google RTP extension
 
-##### Payload
+#### Payload
 
 In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp.
 
 
 
-#### Data Aggregation
+### Keep-alive and Heartbeat
+
+In a non-AV PubSub Conference, Publishers might stay within a PubSub conference for a long periods without publishing any data. Subscribers will not publish any data at all. There are a couple of possible implications that must be considered: NAT binding keep-alives and heartbeats (i.e., inform other PubSub Participants that a PubSub Participant is still 'alive'). NAT binding keep-alives are needed in cases where a PubSub Participants needs to send periodic data in order to maintain NAT bindings between itself and the PubSub Conference servers. This is important for Subscribers, but also for Publishers that publish data with very long intervals.
+
+{{!RFC6263}} describes different RTP/RTCP mechanisms to send NAT keep-alives.
+
+The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/RTCP. Instead, a participant will send an empty transport packet (e.g., UDP packet).  Note that this mechanism is useful mainly for NAT traversal purpose. The conference server application will typcially not be informed about these packets, and will not forward the packets to other conference particiapants. This mechanism is applicable to non-AV data in PubSub Conferences.
+
+The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific RTP payload format for comfort noise {{!RFC3389}}. The payload format has been defined for audio data, and must be supported by both senders and receivers. Is not applicable for non-AV data in PubSub conferences.
+
+The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/RTCP multiplexing, where the same 5-typle is used for the RTP and RTCP packets. When there is no data to be sent, an RTCP packet can be sent as a keep-alive. Note that Subscribers that do not send RTP packets can still send RTCP packets.
+
+The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with Unknown Payload Type' mechanisms uses invalid with an unvalid RTP version number respectively a RTP packet with a non-negotiated payload type. Receivers are expected to ignore and discard these types of RTP packets. This mechanism is applicable to non-AV data in PubSub Conferences.
+
+
+
+In an AV conference, most participants will typically both send and receive data. However, in a PubSub Conference many of the PubSub Participants will only send data (Publihser) or receive data (Subscriber). However, eventhough a Subsriber does not publish any data, it might still use the mechanisms above if needed, and a PubSub Conference Server needs to be prepared to receive such RTP/RTCP packets from both Publishers and Subscribers.
+
+NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is that Publishers and Subscribers do not need to be aware of each other. In such cases there is no need to use an end-to-end heartbeat mechanism between Publishers and Subscribers. Note that there might still be a heartbeat mechanism used between Publishers/Subsribers and the Broker. However, there might be cases where Publishers and Subscribers are tightly coupled, and where a heartbeat mechanism is required.
+
+NOTE: Some data formats might define their own methods for sending heartbeats. For example, there might a way to indicate that the payload is only used for heartbeat purpose, and does not contain any additional data.
+
+
+
+
+
+
+### Data Aggregation
 
 
 
 NOTE: SenML supports aggregation. Mutli
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## RFC 4103 Consierations {#sec-conf-considerations-4103}
 
@@ -298,11 +434,7 @@ As t140 packets are only sent when there is new text to send. Because of that, a
 
 Note that, if there is no new text to send, an RTP packet that only contains redundant data might be sent. This can be useful to e.g., maintain NAT bindings, and as a generic heartbeat mechanism to indicate that the sender is still alive.
 
-### Idle Period
 
-
-
-{{!RFC9071}} gives guidance on how to process real-time text in a conference server.
 
 
 
@@ -314,6 +446,12 @@ Note that, if there is no new text to send, an RTP packet that only contains red
 #### Simultanous Senders
 
 As described in Section 3.1 of {{!RFC9071}}, in RTT conferences typically only one participant writes and sends text (at least long pieces of text) at any given time. Within a Publish/Subscribe network, multiple Publishers might publish data simultaneously, as data might be published as soon as it has been sampled, and as Publishers are now aware of when other Publsihers are publishing data. Because of this, the conference server might receive published data from multiple Publishers simultaneously. If the conference server is not able to simultaneously forward all published data, it will have to buffer the data.
+
+### Idle Period
+
+
+
+{{!RFC9071}} gives guidance on how to process real-time text in a conference server.
 
 
 #### Mode
@@ -327,11 +465,6 @@ Section 1.2 of {{!RFC9071}} describes different "modes".
 
 Within a Publish/Subscribe network, the data publishing interval can vary widely, depending on the use-case. In some constrained environements, a Publisher may publish data e.g., once a day, while in an industrial environment a Publisher may publish data all the time, with a very short publishing interval.
 
-
-
-#### Sending vs Receiving
-
-In an AV Conference, human participants typically both send and receive media. This can also be the case in a PubSub Conference, if the Publish/Subscribe traffic pattern is used to realize two-way communication between conference participants. However, often PubSub Conference participants will either send (Publish) or receive (Subscribe) data. For example, sensors will typically only publish data.
 
 
 
@@ -348,30 +481,7 @@ Received Real-time text is often read by humans. Because of that, it is importan
 In the 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' solution, the receivers will receive the text from all senders within a single RTP stream from the conference server.
 
 
-## RTP Non-Conference Considerations
 
-While the scope of this document is how a conference server can be used to realize a Publish/Subscribe Broker, this Section gives a short overview on how existing RTP extensions can be used for non-AV data.
-
-### RTP Retransmission Payload Format (IETF RFC 4588)
-
-https://datatracker.ietf.org/doc/html/rfc4588
-
-### RTP Payload for Redundant Audio Data (IETF RFC 2198)
-
-https://datatracker.ietf.org/doc/html/rfc2198
-
-QUESTION: Can the mechanism be used for non-audio data?
-
-###  An RTP Payload Format for Generic Forward Error Correction (IETF RFC 2733)
-
-https://datatracker.ietf.org/doc/html/rfc2733
-
-FEC is sent as a separate RTP stream.
-
-
-### RTP Payload Format for Flexible Forward Error Correction (FEC) (IETF RFC 8627)
-
-https://datatracker.ietf.org/doc/html/rfc8627
 
 
 
@@ -380,28 +490,6 @@ https://datatracker.ietf.org/doc/html/rfc8627
 In a Publish/Subscribe network, as publishers publish data independently from each other, there is typically no need for subscribers to syncrhonize or "lip-synch" the data.
 
 
-
-## Keep-alive and Heartbeat Considerations
-
-In a non-AV PubSub Conference, Publishers might stay within a PubSub conference for a long periods without publishing any data. Subscribers will not publish any data at all. There are a couple of possible implications that must be considered: NAT binding keep-alives and heartbeats (i.e., inform other PubSub Participants that a PubSub Participant is still 'alive'). NAT binding keep-alives are needed in cases where a PubSub Participants needs to send periodic data in order to maintain NAT bindings between itself and the PubSub Conference servers. This is important for Subscribers, but also for Publishers that publish data with very long intervals.
-
-{{!RFC6263}} describes different RTP/RTCP mechanisms to send NAT keep-alives.
-
-The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/RTCP. Instead, a participant will send an empty transport packet (e.g., UDP packet).  Note that this mechanism is useful mainly for NAT traversal purpose. The conference server application will typcially not be informed about these packets, and will not forward the packets to other conference particiapants. This mechanism is applicable to non-AV data in PubSub Conferences.
-
-The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific RTP payload format for comfort noise {{!RFC3389}}. The payload format has been defined for audio data, and must be supported by both senders and receivers. Is not applicable for non-AV data in PubSub conferences.
-
-The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/RTCP multiplexing, where the same 5-typle is used for the RTP and RTCP packets. When there is no data to be sent, an RTCP packet can be sent as a keep-alive. Note that Subscribers that do not send RTP packets can still send RTCP packets.
-
-The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with Unknown Payload Type' mechanisms uses invalid with an unvalid RTP version number respectively a RTP packet with a non-negotiated payload type. Receivers are expected to ignore and discard these types of RTP packets. This mechanism is applicable to non-AV data in PubSub Conferences.
-
-
-
-In an AV conference, most participants will typically both send and receive data. However, in a PubSub Conference many of the PubSub Participants will only send data (Publihser) or receive data (Subscriber). However, eventhough a Subsriber does not publish any data, it might still use the mechanisms above if needed, and a PubSub Conference Server needs to be prepared to receive such RTP/RTCP packets from both Publishers and Subscribers.
-
-NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is that Publishers and Subscribers do not need to be aware of each other. In such cases there is no need to use an end-to-end heartbeat mechanism between Publishers and Subscribers. Note that there might still be a heartbeat mechanism used between Publishers/Subsribers and the Broker. However, there might be cases where Publishers and Subscribers are tightly coupled, and where a heartbeat mechanism is required.
-
-NOTE: Some data formats might define their own methods for sending heartbeats. For example, there might a way to indicate that the payload is only used for heartbeat purpose, and does not contain any additional data.
 
 
 ## RTCP Considerations
@@ -489,45 +577,7 @@ https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrex
 NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers
 
 
-# SIP Considerations {#sec-sip-considerations}
 
-# SIP Subject Header Field {#sec-sip-considerations-subject}
-
-The SIP Subject header field can be used to indicate the PubSub Topic associated with the PubSub Conference.
-
-# SDP Considerations {#sec-sdp-considerations}
-
-## SDP Direaction Attribute {#sec-sdp-considerations-dir-attr}
-
-These attributes can be used to indicate the PubSub role of a participant.
-
-A participant can use SDP 'sendonly' attribute to indicate that it is acting as a Publisher.
-
-A participant can use SDP 'recvonly' attribute to indicate that it is acting as a Subscriber.
-
-A participant can use SDP 'sendrecv' attribute to indicate that it is acting as both a Publisher and a Subscriber.
-
-A participant can use SDP 'inactive' attribute to indicate that it is not acting as a Publisher nor a Subscriber. A participant can use the attribute e.g., to temporary indicate to the conference server that it does not want to receive data associated with the conference, but also to indicate that it will not send data associated with the conference.
-
-# SIP Conference Considerations
-
-## Conference lifecycle
-
-### Conference creation
-
-An AV conference is typically created either by one of the participants, or by a contralized function tool.
-
-### Conference duration and termination
-
-The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.
-
-The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.
-
-## Join existing conference
-
-A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.
-
-It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code {{!RFC3261}}) or simply add the endpoint to the existing conference.
 
 
 ## Data Mixing
@@ -587,74 +637,6 @@ SenML Pack forwarded by the Broker towards the Subscribers:
 ~~~~
 {: #fig-senml-pack title='SenML Pack created by broker' artwork-align="center"}
 
-
-
-
-
-# SIP Event Package Considerations
-
-This section describes extensions for the SIP Event Package for Conference State {{!RFC4575}} that are useful for a PubSub Conference. In addition, this section describes a new SIP Event Package, SIP Event Package for PublishSubscribe, that can be used to inform participants about the PubSub Conferences hosted by a conference server, e.g., the Topic and conference-uri associated with each conference.
- 
-## SIP Event Package for Conference State
-
-{{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.
-
-### Extensions for PubSub
-
-#### Maximum Number of Conference Participants
-
-The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher" and "maximum-user-count-subscriber".
-
-## SIP Event Package for PublishSubscribe
-
-While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.
-
-This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.
-
-~~~~ aasvg
-
-pubsub-conferences-info
-     |
-     |-- pubsub-conferences
-          |-- pubsub-conference
-          |    |-- conference-URI
-          |    |-- topic
-          |-- pubsub-conference
-          .    |-- conference-URI
-          .    |-- topic
-          .
-
-~~~~
-{: #fig-sip-eventpackage-pubsub title='SIP Event Package for PublishSubscribe' artwork-align="center"}
-
-## Example
-
-~~~~ aasvg
-
-   <?xml version="1.0" encoding="UTF-8"?>
-   <pubsub-conferences-info
-    xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"
-    entity="sips:confserver@example.com"
-    state="full" version="1">
-   <!--
-     PUBSUB CONFERENCES
-   -->
-    <pubsub-conferences>
-     <pubsub-conference entity="sip:pubsubconf123@example.com" state="full">
-      <topic>water temperature</topic>
-     </pubsub-conference>
-     <pubsub-conference entity="sip:pubsubconf456@example.com" state="full">
-      <topic>air temperature</topic>
-     </pubsub-conference>
-    </pubsub-conferences>
-   </pubsub-conferences-info>
-
-NOTE: The conference-uri is defined as an pubsub-conference element attribute. As an option, it could be defined as a separate element.
-
-NOTE: As an option, the topic could also be defined as an pubsub-conference element attribute.
-
-~~~~
-{: #fig-sip-pubsup-event title='Example: SIP Event Package for PublishSubscribe' artwork-align="center"}
 
 
 
