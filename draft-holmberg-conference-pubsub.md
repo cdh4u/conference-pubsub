@@ -117,17 +117,20 @@ This document uses the SIP terminology defined in {{!RFC4353}} and the RTP termi
 
 # Generic Conference Considerations {#sec-conf-considerations-generic}
 
-This Section discusses the major differences between an AV Conference and a PubSub Conference.
+This section discusses generic (non-protocol specific) differences between audiovisual conferences and Pub/Sub conferences.
 
-## Join Conference
+## Conference Creation
 
-A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.
+A conference server might host multiple audiovisual conferences that share the same conference name, as the name is not used to uniqually identify the conference. It is not uncommon that multiple audiovisual conferences share the same name, as the conference creators might not be aware of each other.
 
-It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code {{!RFC3261}}) or simply add the endpoint to the existing conference.
+When a conference server is hosting Pub/Sub conferences, it is not practical to host multiple Pub/Sub conferences that share the same topic. Because of that, if a participants tries to create a Pub/Sub conference with a topic for which a Pub/Sub conference already exists, the conference server might choose to either reject the conference creation request, redirect the participant to the existing conference, or simply add the endpoint to the existing conference.
 
 ### Conference Duration
 
-The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.
+The duration of an audiovisual conference may vary. And, while longlived conferences might exist, the duration is typcially measured in minutes or hours.
+
+
+
 
 The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.
 
@@ -172,7 +175,7 @@ The discussions within this Section are based on the procedures and concepts def
 
 ## SIP Subject Header Field {#sec-conf-considerations-sip-subject}
 
-The SIP Subject header field can be used to indicate the Topic associated with the PubSub Conference. When a new new conference is created (using SIP signalling) the conference creator uses the Subject header field to indicate the Topic of the conference.
+The SIP Subject header field can be used to indicate the topic associated with the PubSub Conference. When a new new conference is created (using SIP signalling) the conference creator uses the Subject header field to indicate the Topic of the conference.
 
 ~~~~ aasvg
 
