@@ -67,7 +67,7 @@ A topic typcially describes the semantics of the data (e.g., "water-temperature-
 
 Some Pub/Sub frameworks do not use brokers (broker-less Pub/Sub). Instead, the distribution of messages are realized using network features, e.g., IP multicast. Broker-less Pub/Sub is outside the scope of this document.
 
-When a publisher publishes data it associates it with a topic.  
+When a publisher publishes data it associates it with a topic.
 
 ~~~~ aasvg
 
@@ -92,9 +92,9 @@ The main advantage of the solution is the possibility to use existing SIP-based 
 
 The real-time transport protocol (RTP) {{!RFC3550}} is used to transport the data. Within this document the RTP payload for T.140 text conversation {{!RFC4103}} is used to transport the data. The examples use Sensor Measurement Lists (SenML) {{!RFC8428}} to encode the data. However, other payloads and encoding mechanisms can also be used.
 
-NOTE: This document is based on the generic SIP conferencing procedures defined in {{!RFC4353}} and {{!RFC4579}}. 
+NOTE: This document is based on the generic SIP conferencing procedures defined in {{!RFC4353}} and {{!RFC4579}}.
 
-NOTE: While RTP is a generic data transport protocol, the main usage has been for transport of audiovisual data (and real-time text), between human users. However, at the time of writing this document, there is work in IETF on RTP payloads also for transport of non-audivisual data. 
+NOTE: While RTP is a generic data transport protocol, the main usage has been for transport of audiovisual data (and real-time text), between human users. However, at the time of writing this document, there is work in IETF on RTP payloads also for transport of non-audivisual data.
 
 
 # Conventions and Definitions
@@ -113,7 +113,7 @@ Translator: An intermediate system that forwards RTP packets with their synchron
 
 TO BE REMOVED END
 
-This document uses the SIP terminology defined in {{!RFC4353}} and the RTP terminology defined in {{!RFC3550}} 
+This document uses the SIP terminology defined in {{!RFC4353}} and the RTP terminology defined in {{!RFC3550}}.
 
 # Generic Conference Considerations {#sec-conf-considerations-generic}
 
@@ -208,7 +208,7 @@ A participant can use SDP 'inactive' attribute to indicate that it is not acting
 # SIP Event Package Considerations {#sec-conf-considerations-sip-event}
 
 This section describes extensions for the SIP Event Package for Conference State {{!RFC4575}} that are useful for a PubSub Conference. In addition, this section describes a new SIP Event Package, SIP Event Package for PublishSubscribe, that can be used to inform participants about the PubSub Conferences hosted by a conference server, e.g., the Topic and conference-uri associated with each conference.
- 
+
 ## SIP Event Package for Conference State {#sec-conf-considerations-sip-event-conf-state}
 
 {{!RFC4575}} defines a SIP Event Package {{!RFC3265}} for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.
@@ -401,9 +401,9 @@ In a Publish/Subscribe network, as publishers publish data independently from ea
 
 ## RTCP Considerations
 
-The Real-time Control Protocol (RTCP) is used in conjunction with RTP. While RTP carries the actual data, RTCP carries information (e.g., statistics, control information), within an RTP session. 
+The Real-time Control Protocol (RTCP) is used in conjunction with RTP. While RTP carries the actual data, RTCP carries information (e.g., statistics, control information), within an RTP session.
 
-NOTE: As RTCP messages sent by a Publisher might be terminated by a conference server (performing data mixing), essential information might not reach the Subscribers. For example, an RTPC Sender Report (SR) that provides mapping between the absolute time and the RTP Timestamp might not reach the Subscribers. 
+NOTE: As RTCP messages sent by a Publisher might be terminated by a conference server (performing data mixing), essential information might not reach the Subscribers. For example, an RTPC Sender Report (SR) that provides mapping between the absolute time and the RTP Timestamp might not reach the Subscribers.
 
 Note that if is a large number of participants within a PubSub Conference, and if there is a need to send RTCP messages frequently, the RTCP messages might consume a large portion of network- and conference server capacity.
 
