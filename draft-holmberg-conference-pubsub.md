@@ -54,74 +54,20 @@ informative:
 
 --- abstract
 
-This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.
-
+This document describes how a Session Initiation Protocol (SIP) {{!RFC3261}} conference server {{!RFC4353}} can be used to realize a Pub/Sub broker to distribute non-audiovisual data (e.g., IoT sensor readings). SIP agents are used to realize publishers and subscribers. The main advantage of the solution is the possibility to use existing SIP-based audiovisual conferencing infrastructure and protocols to realize a Pub/Sub solution.
 
 --- middle
-
-# Terminology
-
-Synchronization source (SSRC): The source of a stream of RTP packets, identified by a 32-bit numeric SSRC identifier carried in the RTP header so as not to be dependent upon the network address. All packets from a synchronization source form part of the same timing and sequence number space, so a receiver groups packets by synchronization source for playback. Examples of synchronization sources include the sender of a stream of packets derived from a signal source such as a microphone or a camera, or an RTP mixer. A synchronization source may change its data format, e.g., audio encoding, over time.  The SSRC identifier is a randomly chosen value meant to be globally unique within a particular RTP session. A participant need not use the same SSRC identifier for all the RTP sessions in a multimedia session; the binding of the SSRC identifiers is provided through RTCP. If a participantgenerates multiple streams in one RTP session, for example from separate video cameras, each MUST be identified as a different SSRC.
-
-Contributing source (CSRC): A source of a stream of RTP packetsthat has contributed to the combined stream produced by an RTP mixer. The mixer inserts a list of the SSRC identifiers of the sources that contributed to the generation of a particular packet into the RTP header of that packet. This list is called the CSRC list. An example application is audio conferencing where a mixer indicates all the talkers whose speech was combined to produce the outgoing packet, allowing the receiver to indicate the current talker, even though all the audio packets contain the same SSRC identifier (that of the mixer).
-
-Mixer: An intermediate system that receives RTP packets from one or more sources, possibly changes the data format, combines the packets in some manner and then forwards a new RTP packet. Since the timing among multiple input sources will not generally be synchronized, the mixer will make timing adjustments among the streams and generate its own timing for the combined stream. Thus, all data packets originating from a mixer will be identified as having the mixer as their synchronization source.
-
-Translator: An intermediate system that forwards RTP packets with their synchronization source identifier intact. Examples of translators include devices that convert encodings without mixing, replicators from multicast to unicast, and application-level filters in firewalls.
-
-~~~~ aasvg
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |V=2|P|X|  CC   |M|     PT      |       sequence number         |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                           timestamp                           |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |           synchronization source (SSRC) identifier            |
-   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-   |            contributing source (CSRC) identifiers             |
-   |                             ....                              |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-~~~~
-{: #fig-rtp-packet title='RTP Packet Header' artwork-align="center"}
 
 
 # Introduction
 
-This document describes how a Session Initiation Protocol (SIP) {{!RFC3261}} Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data, e.g., IoT sensor readings.
+Publish/Subscribe (Pub/Sub) is an communication pattern for asynchronous transport of messages between endpoints. Endpoints that create and send messages are referred to as publishers. Endpoints that receive and consume messages are referred to as subscribers. Publishers do not send messages directly to subscribers. Instead, publishers send messages to an intermediary, referred to as broker. A publisher will associate the message with a topic, and the broker will forward the message to each subscriber that has subscribed to the topic. As the messages are sent to, and forwarded by, the broker, publishers and subscribers do not need to be aware of each other. This enables flexible and scalable systems.
 
-One main advantage of the solution is the possibility to use existing SIP- and RTP-based audiovisual conferencing infrastructure and protocols to realize data distributing using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe frameworks and protocols.
+A topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publisher (e.g., "water-pump-123"). The structure and syntax of the topic depends on the Pub/Sub framework. Some Pub/Sub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.
 
-NOTE: Conference servers might behave differently depending on configuration, profiles etc. The procedures in this document are based on a generic assumptions on how conference servers behave.
+Some Pub/Sub frameworks do not use brokers (broker-less Pub/Sub). Instead, the distribution of messages are realized using network features, e.g., IP multicast. Broker-less Pub/Sub is outside the scope of this document.
 
-The examples in this document use the RTP T.140 real-time text (RTT) payload format {{!RFC4103}} to transport the payload data, as it will allow to use a conference server that supports the payload format to act as a PubSub broker. Sen
-
-
-
-and SenML to structure and encode the payload data. Other payload formats and
-encodings can also be used.
-
-While RTP is a generic transport protocol, the main usage has been for transport of real-time AudioVisual data. Non-AudioVisual data has typically been data associated with AudioVisual data, e.g., real-time text (rtt), DTMF signals. However, at the time of writing this document, IETF is working on a number of specifications where RTP is used to transport other types of non-AV data.
-
-
-## Publish/Subscribe
-
-Publish/Subscribe (PubSub)
-
-
-When a publisher publishes data it associates it with a topic. The topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publsiher (e.g., "water-pump-123"). The structure and syntaxof the topic depends on the Pub/Sub framework. Some PubSub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.
-
-Subscribers that are interested in data assocoated with the topic will subscribe to the topic. The Pub/Sub framework will then route published
-data to each subscriber that has subscribed to the topic. The subscriptions and routing of published data is often handled by an intermediary function, often called a broker. Publishers will publish data to the broker, and the broker will forward the data to each subscriber that has subscribed to the topic associated with the data.
-
-
-Many Pub/Sub frameworks.
-
-Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather relies on other mechanisms (e.g., IP multicast) to route published messages from publishers to subscribers. Broker-less Pub/Sub is outside the scope of this document.
-
-
+When a publisher publishes data it associates it with a topic.  
 
 ~~~~ aasvg
 
@@ -140,73 +86,34 @@ Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather re
 ~~~~
 {: #fig-arch-pubsub title='Publish/Subscribe Architecture' artwork-align="center"}
 
+This document describes how a Session Initiation Protocol (SIP) {{!RFC3261}} conference server {{!RFC4353}} can be used to realize a Pub/Sub broker to distribute non-audiovisual data (e.g., IoT sensor readings). SIP agents are used to realize publishers and subscribers. This is referred to Pub/Sub conference.
 
-~~~~
-=> 0.01 GET
-   Uri-Path: ps
-   Uri-Path: h9392
+The main advantage of the solution is the possibility to use existing SIP-based audiovisual conferencing infrastructure and protocols to realize a Pub/Sub solution.
 
-<= 2.05 Content
-   Content-Format: TBD2 (application/core-pubsub+cbor)
-   {
-      "topic-name" : "living-room-sensor",
-      "topic-data" : "ps/data/1bd0d6d",
-      "resource-type": "core.ps.conf",
-      "media-type": "application/senml-cbor",
-      "topic-type": "temperature",
-      "expiration-date": "2023-04-00T23:59:59Z",
-      "max-subscribers": 100
-   }
-~~~~
+The real-time transport protocol (RTP) {{!RFC3550}} is used to transport the data. Within this document the RTP payload for T.140 text conversation {{!RFC4103}} is used to transport the data. The examples use Sensor Measurement Lists (SenML) {{!RFC8428}} to encode the data. However, other payloads and encoding mechanisms can also be used.
+
+NOTE: This document is based on the generic SIP conferencing procedures defined in {{!RFC4353}} and {{!RFC4579}}. 
+
+NOTE: While RTP is a generic data transport protocol, the main usage has been for transport of audiovisual data (and real-time text), between human users. However, at the time of writing this document, there is work in IETF on RTP payloads also for transport of non-audivisual data. 
 
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-This document uses the SIP conference terminology defined in {{!RFC4353}}.
+TO BE REMOVED BEGIN
 
-Publish/Subscribe (PubSub):
-: A message communication model where messages associated with specific topics are sent to a broker. Interested parties, i.e. subscribers, receive these topic-based messages from the broker without the original sender knowing the recipients. The broker handles matching and delivering these messages to the appropriate subscribers.
+Synchronization source (SSRC): The source of a stream of RTP packets, identified by a 32-bit numeric SSRC identifier carried in the RTP header so as not to be dependent upon the network address. All packets from a synchronization source form part of the same timing and sequence number space, so a receiver groups packets by synchronization source for playback. Examples of synchronization sources include the sender of a stream of packets derived from a signal source such as a microphone or a camera, or an RTP mixer. A synchronization source may change its data format, e.g., audio encoding, over time.  The SSRC identifier is a randomly chosen value meant to be globally unique within a particular RTP session. A participant need not use the same SSRC identifier for all the RTP sessions in a multimedia session; the binding of the SSRC identifiers is provided through RTCP. If a participantgenerates multiple streams in one RTP session, for example from separate video cameras, each MUST be identified as a different SSRC.
 
-Publisher:
-: A xxx. Within the scope of this document, a Publisher is a conference participant that sends data towards a conference server using RTP.
+Contributing source (CSRC): A source of a stream of RTP packetsthat has contributed to the combined stream produced by an RTP mixer. The mixer inserts a list of the SSRC identifiers of the sources that contributed to the generation of a particular packet into the RTP header of that packet. This list is called the CSRC list. An example application is audio conferencing where a mixer indicates all the talkers whose speech was combined to produce the outgoing packet, allowing the receiver to indicate the current talker, even though all the audio packets contain the same SSRC identifier (that of the mixer).
 
-Subscribe:
-: A xxx. Within the scope of this document, a Subscriber is a conference participant that receives data from a conference server using RTP.
+Mixer: An intermediate system that receives RTP packets from one or more sources, possibly changes the data format, combines the packets in some manner and then forwards a new RTP packet. Since the timing among multiple input sources will not generally be synchronized, the mixer will make timing adjustments among the streams and generate its own timing for the combined stream. Thus, all data packets originating from a mixer will be identified as having the mixer as their synchronization source.
 
-NOTE: A conference participant might act both as Publisher and Subscriber.
+Translator: An intermediate system that forwards RTP packets with their synchronization source identifier intact. Examples of translators include devices that convert encodings without mixing, replicators from multicast to unicast, and application-level filters in firewalls.
 
-Topic:
-: A xxx. A Topic typically refers to the semantic of the published data (e.g., 'water-temperature'), but it might also refer to the Publisher (e.g., 'water-pump-123') or a combination (e.g., 'water-pump-123/water-temperature'). Topics might also have a tree structure (e.g., 'factory/line-2/water-pump-123/water-temperature'), or allow wildcarding (e.g., 'factory/line-2/water-pump-123/*'). Some systems might use a standardized naming scheme and structure for the Topics, while other systems allow applications to define their own Topic namings and structures. This document does not mandate or define a specific naming or structure for Topcis, and the Topics shown examples are only examples.
+TO BE REMOVED END
 
-Broker:
-: An intermediary function that receives published data from Publishers, and forwards it to Subscribers. Within the scope of this document, the Broker is a conference server that supports SIP/SDP signalling and RTP data transport. Note that even if other signalling protocols than SIP/SDP are used, the RTP and data handling considerations within this document might still apply.
-
-Published data
-: Data that a Publisher sends (publishes), and a Subscriber receives, for a Topic. Within the scope of this document, the published data is the RTP payload {{!RFC3550}}, i.e., the data transported in an RTP packet.
-
-Conference:
-: A xxx
-
-AudioVisual Conference/AV Conference:
-: A "traditional" SIP conference, where human participants send and receive speech audio, and in some cases video. The conference server has different policies for distributing audio and video. In a typcial sceanio it mixes and forwards the audio of all participants, while forwarding the video of the currently speaking conference participant (referred to as "current speaker").
-
-PubSub Conference:
-: A SIP conference used to realize data distribution using the Publish/Subscribe traffic pattern, following the procedures in this document.
-
-PubSub Conference Participant/PubSub Participant:
-: An endpoint that has joined (or is about to join) a PubSub Conference. Within the PubSub Conference, the PubSub Participant will take the role as a Publisher, Subscriber or both.
-
-
-NOTE: There are more and more use-cases where both AudioVisual data and non-AudioVisual data is exchanged within the same conference. The description of a mixed AudioVisual/PubSub conference is outside the scope of this document.
-
-AudioVisual Data:
-: Data that contains encoded audio or video.
-
-Network Time Protocol (NTP): The absolute time in seconds relative to midnight UTC on 1 January 1900.
-
-
+This document uses the SIP terminology defined in {{!RFC4353}} and the RTP terminology defined in {{!RFC3550}} 
 
 # Generic Conference Considerations {#sec-conf-considerations-generic}
 
