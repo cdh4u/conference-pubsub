@@ -7,7 +7,7 @@
 <title>Session Initiation Protocol (SIP) Conference Server for Publish/Subscribe</title>
 <meta content="Christer Holmberg" name="author">
 <meta content="
-       This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data. 
+       This document describes how a Session Initiation Protocol (SIP)   conference server   can be used to realize a Pub/Sub broker to distribute non-audiovisual data (e.g., IoT sensor readings). SIP agents are used to realize publishers and subscribers. The main advantage of the solution is the possibility to use existing SIP-based audiovisual conferencing infrastructure and protocols to realize a Pub/Sub solution. 
     " name="description">
 <meta content="xml2rfc 3.19.2" name="generator">
 <meta content="Session Initiation Protocol" name="keyword">
@@ -1034,7 +1034,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Holmberg</td>
-<td class="center">Expires 11 August 2024</td>
+<td class="center">Expires 17 August 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1047,12 +1047,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-holmberg-conference-pubsub-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-02-08" class="published">8 February 2024</time>
+<time datetime="2024-02-14" class="published">14 February 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-08-11">11 August 2024</time></dd>
+<dd class="expires"><time datetime="2024-08-17">17 August 2024</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1065,7 +1065,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">Session Initiation Protocol (SIP) Conference Server for Publish/Subscribe</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document describes how a Session Initiation Protocol (SIP) Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document describes how a Session Initiation Protocol (SIP) <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> conference server <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span> can be used to realize a Pub/Sub broker to distribute non-audiovisual data (e.g., IoT sensor readings). SIP agents are used to realize publishers and subscribers. The main advantage of the solution is the possibility to use existing SIP-based audiovisual conferencing infrastructure and protocols to realize a Pub/Sub solution.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1097,7 +1097,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 11 August 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 17 August 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1127,882 +1127,802 @@ svg :is([fill="white"], [fill^="#fff"]) {
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-generic-conference-consider" class="internal xref">Generic Conference Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-publish-subscribe" class="internal xref">Publish/Subscribe</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-join-conference" class="internal xref">Join Conference</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1" class="keepWithNext"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-conference-duration" class="internal xref">Conference Duration</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.2">
+                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="auto internal xref">3.1.2</a>.  <a href="#name-conference-termination" class="internal xref">Conference Termination</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.3">
+                    <p id="section-toc.1-1.3.2.1.2.3.1"><a href="#section-3.1.3" class="auto internal xref">3.1.3</a>.  <a href="#name-sending-and-receiving-data" class="internal xref">Sending and Receiving Data</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.4">
+                    <p id="section-toc.1-1.3.2.1.2.4.1"><a href="#section-3.1.4" class="auto internal xref">3.1.4</a>.  <a href="#name-simultanous-senders" class="internal xref">Simultanous Senders</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.5">
+                    <p id="section-toc.1-1.3.2.1.2.5.1"><a href="#section-3.1.5" class="auto internal xref">3.1.5</a>.  <a href="#name-number-of-conference-partic" class="internal xref">Number of Conference Participants</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.6">
+                    <p id="section-toc.1-1.3.2.1.2.6.1"><a href="#section-3.1.6" class="auto internal xref">3.1.6</a>.  <a href="#name-data-sending-frequency" class="internal xref">Data Sending Frequency</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.7">
+                    <p id="section-toc.1-1.3.2.1.2.7.1"><a href="#section-3.1.7" class="auto internal xref">3.1.7</a>.  <a href="#name-data-synchronization" class="internal xref">Data Synchronization</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-conference-considerations" class="internal xref">Conference Considerations</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-sip-signalling-consideratio" class="internal xref">SIP Signalling Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-conference-duration" class="internal xref">Conference Duration</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
-                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-sending-and-receiving" class="internal xref">Sending and Receiving</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
-                    <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="auto internal xref">4.1.2</a>.  <a href="#name-simultanous-senders" class="internal xref">Simultanous Senders</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.3">
-                    <p id="section-toc.1-1.4.2.1.2.3.1"><a href="#section-4.1.3" class="auto internal xref">4.1.3</a>.  <a href="#name-number-of-conference-partic" class="internal xref">Number of Conference Participants</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.4">
-                    <p id="section-toc.1-1.4.2.1.2.4.1"><a href="#section-4.1.4" class="auto internal xref">4.1.4</a>.  <a href="#name-data-sending-frequency" class="internal xref">Data Sending Frequency</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.5">
-                    <p id="section-toc.1-1.4.2.1.2.5.1"><a href="#section-4.1.5" class="auto internal xref">4.1.5</a>.  <a href="#name-data-synchronization" class="internal xref">Data Synchronization</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-rfc-4103-consierations" class="internal xref">RFC 4103 Consierations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
-                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-redundancy" class="internal xref">Redundancy</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
-                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-packet-loss-detection" class="internal xref">Packet Loss Detection</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.3">
-                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-idle-period" class="internal xref">Idle Period</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
-                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-rfc-9071-considerations" class="internal xref">RFC 9071 Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
-                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-simultanous-senders-2" class="internal xref">Simultanous Senders</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
-                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-sending-frequency" class="internal xref">Sending Frequency</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.3">
-                    <p id="section-toc.1-1.4.2.3.2.3.1"><a href="#section-4.3.3" class="auto internal xref">4.3.3</a>.  <a href="#name-sending-vs-receiving" class="internal xref">Sending vs Receiving</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-rtp-non-conference-consider" class="internal xref">RTP Non-Conference Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.1">
-                    <p id="section-toc.1-1.4.2.4.2.1.1"><a href="#section-4.4.1" class="auto internal xref">4.4.1</a>.  <a href="#name-rtp-retransmission-payload-" class="internal xref">RTP Retransmission Payload Format (IETF RFC 4588)</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.2">
-                    <p id="section-toc.1-1.4.2.4.2.2.1"><a href="#section-4.4.2" class="auto internal xref">4.4.2</a>.  <a href="#name-rtp-payload-for-redundant-a" class="internal xref">RTP Payload for Redundant Audio Data (IETF RFC 2198)</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.3">
-                    <p id="section-toc.1-1.4.2.4.2.3.1"><a href="#section-4.4.3" class="auto internal xref">4.4.3</a>.  <a href="#name-an-rtp-payload-format-for-g" class="internal xref">An RTP Payload Format for Generic Forward Error Correction (IETF RFC 2733)</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.4">
-                    <p id="section-toc.1-1.4.2.4.2.4.1"><a href="#section-4.4.4" class="auto internal xref">4.4.4</a>.  <a href="#name-rtp-payload-format-for-flex" class="internal xref">RTP Payload Format for Flexible Forward Error Correction (FEC) (IETF RFC 8627)</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
-                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-time-considerations" class="internal xref">Time Considerations</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.6">
-                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-keep-alive-and-heartbeat-co" class="internal xref">Keep-alive and Heartbeat Considerations</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.7">
-                <p id="section-toc.1-1.4.2.7.1"><a href="#section-4.7" class="auto internal xref">4.7</a>.  <a href="#name-rtcp-considerations" class="internal xref">RTCP Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.7.2.1">
-                    <p id="section-toc.1-1.4.2.7.2.1.1"><a href="#section-4.7.1" class="auto internal xref">4.7.1</a>.  <a href="#name-nack-considerations" class="internal xref">NACK Considerations</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.8">
-                <p id="section-toc.1-1.4.2.8.1"><a href="#section-4.8" class="auto internal xref">4.8</a>.  <a href="#name-rtp-mixing-or-translating" class="internal xref">RTP Mixing or Translating</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.8.2.1">
-                    <p id="section-toc.1-1.4.2.8.2.1.1"><a href="#section-4.8.1" class="auto internal xref">4.8.1</a>.  <a href="#name-translating" class="internal xref">Translating</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.8.2.2">
-                    <p id="section-toc.1-1.4.2.8.2.2.1"><a href="#section-4.8.2" class="auto internal xref">4.8.2</a>.  <a href="#name-mixing" class="internal xref">Mixing</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.9">
-                <p id="section-toc.1-1.4.2.9.1"><a href="#section-4.9" class="auto internal xref">4.9</a>.  <a href="#name-single-vs-multiple-rtp-sess" class="internal xref">Single vs multiple RTP sessions</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.10">
-                <p id="section-toc.1-1.4.2.10.1"><a href="#section-4.10" class="auto internal xref">4.10</a>. <a href="#name-sender-timestamp" class="internal xref">Sender Timestamp</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-sip-subject-header-field" class="internal xref">SIP Subject Header Field</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-sip-considerations" class="internal xref">SIP Considerations</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-sdp-considerations" class="internal xref">SDP Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-sdp-direaction-attribute" class="internal xref">SDP Direaction Attribute</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-sip-subject-header-field" class="internal xref">SIP Subject Header Field</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-sip-event-package-considera" class="internal xref">SIP Event Package Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-sip-event-package-for-confe" class="internal xref">SIP Event Package for Conference State</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-extensions-for-pubsub" class="internal xref">Extensions for PubSub</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-sip-event-package-for-publi" class="internal xref">SIP Event Package for PublishSubscribe</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.1">
+                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-example" class="internal xref">Example</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-rtp-considerations" class="internal xref">RTP Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.1">
+                    <p id="section-toc.1-1.6.2.3.2.1.1"><a href="#section-6.3.1" class="auto internal xref">6.3.1</a>.  <a href="#name-rtp-timestamp" class="internal xref">RTP Timestamp</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.2">
+                    <p id="section-toc.1-1.6.2.3.2.2.1"><a href="#section-6.3.2" class="auto internal xref">6.3.2</a>.  <a href="#name-keep-alive-and-heartbeat" class="internal xref">Keep-alive and Heartbeat</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.3">
+                    <p id="section-toc.1-1.6.2.3.2.3.1"><a href="#section-6.3.3" class="auto internal xref">6.3.3</a>.  <a href="#name-data-aggregation" class="internal xref">Data Aggregation</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-rfc-4103-consierations" class="internal xref">RFC 4103 Consierations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.1">
+                    <p id="section-toc.1-1.6.2.4.2.1.1"><a href="#section-6.4.1" class="auto internal xref">6.4.1</a>.  <a href="#name-redundancy" class="internal xref">Redundancy</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.2">
+                    <p id="section-toc.1-1.6.2.4.2.2.1"><a href="#section-6.4.2" class="auto internal xref">6.4.2</a>.  <a href="#name-packet-loss-detection" class="internal xref">Packet Loss Detection</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.3">
+                    <p id="section-toc.1-1.6.2.4.2.3.1"><a href="#section-6.4.3" class="auto internal xref">6.4.3</a>.  <a href="#name-rfc-9071-considerations" class="internal xref">RFC 9071 Considerations</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.4">
+                    <p id="section-toc.1-1.6.2.4.2.4.1"><a href="#section-6.4.4" class="auto internal xref">6.4.4</a>.  <a href="#name-idle-period" class="internal xref">Idle Period</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
+                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-time-considerations" class="internal xref">Time Considerations</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.6">
+                <p id="section-toc.1-1.6.2.6.1"><a href="#section-6.6" class="auto internal xref">6.6</a>.  <a href="#name-rtcp-considerations" class="internal xref">RTCP Considerations</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.7">
+                <p id="section-toc.1-1.6.2.7.1"><a href="#section-6.7" class="auto internal xref">6.7</a>.  <a href="#name-rtp-mixing-or-translating" class="internal xref">RTP Mixing or Translating</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.7.2.1">
+                    <p id="section-toc.1-1.6.2.7.2.1.1"><a href="#section-6.7.1" class="auto internal xref">6.7.1</a>.  <a href="#name-translating" class="internal xref">Translating</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.7.2.2">
+                    <p id="section-toc.1-1.6.2.7.2.2.1"><a href="#section-6.7.2" class="auto internal xref">6.7.2</a>.  <a href="#name-mixing" class="internal xref">Mixing</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.8">
+                <p id="section-toc.1-1.6.2.8.1"><a href="#section-6.8" class="auto internal xref">6.8</a>.  <a href="#name-single-vs-multiple-rtp-sess" class="internal xref">Single vs multiple RTP sessions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.9">
+                <p id="section-toc.1-1.6.2.9.1"><a href="#section-6.9" class="auto internal xref">6.9</a>.  <a href="#name-sender-timestamp" class="internal xref">Sender Timestamp</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.10">
+                <p id="section-toc.1-1.6.2.10.1"><a href="#section-6.10" class="auto internal xref">6.10</a>. <a href="#name-data-mixing" class="internal xref">Data Mixing</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-sdp-considerations" class="internal xref">SDP Considerations</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-rtp-considerations-2" class="internal xref">RTP Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-sdp-direaction-attribute" class="internal xref">SDP Direaction Attribute</a></p>
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-rtp-payload-type-pt-for-pub" class="internal xref">RTP Payload Type (PT) for PubSub</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-rtp-header-marker-bit" class="internal xref">RTP Header Marker Bit</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-rtp-extensions-for-pubsub" class="internal xref">RTP Extensions for PubSub</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3.2.1">
+                    <p id="section-toc.1-1.7.2.3.2.1.1"><a href="#section-7.3.1" class="auto internal xref">7.3.1</a>.  <a href="#name-simulcast-and-resolution" class="internal xref">Simulcast and Resolution</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3.2.2">
+                    <p id="section-toc.1-1.7.2.3.2.2.1"><a href="#section-7.3.2" class="auto internal xref">7.3.2</a>.  <a href="#name-retransmission" class="internal xref">Retransmission</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-sip-conference-consideratio" class="internal xref">SIP Conference Considerations</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-rtcp-considerations-2" class="internal xref">RTCP Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
-                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-conference-lifecycle" class="internal xref">Conference lifecycle</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1.2.1">
-                    <p id="section-toc.1-1.8.2.1.2.1.1"><a href="#section-8.1.1" class="auto internal xref">8.1.1</a>.  <a href="#name-conference-creation" class="internal xref">Conference creation</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1.2.2">
-                    <p id="section-toc.1-1.8.2.1.2.2.1"><a href="#section-8.1.2" class="auto internal xref">8.1.2</a>.  <a href="#name-conference-duration-and-ter" class="internal xref">Conference duration and termination</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
-                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-join-existing-conference" class="internal xref">Join existing conference</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
-                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-data-mixing" class="internal xref">Data Mixing</a></p>
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-rtcp-fb" class="internal xref">RTCP FB</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-sip-event-package-considera" class="internal xref">SIP Event Package Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
-                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-sip-event-package-for-confe" class="internal xref">SIP Event Package for Conference State</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.1">
-                    <p id="section-toc.1-1.9.2.1.2.1.1"><a href="#section-9.1.1" class="auto internal xref">9.1.1</a>.  <a href="#name-extensions-for-pubsub" class="internal xref">Extensions for PubSub</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
-                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-sip-event-package-for-publi" class="internal xref">SIP Event Package for PublishSubscribe</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
-                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-xml-schema" class="internal xref">XML Schema</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
-                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-example" class="internal xref">Example</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-standardization-considerati" class="internal xref">Standardization Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-rtp-considerations" class="internal xref">RTP Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
-                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-rtp-payload-type-pt-for-pub" class="internal xref">RTP Payload Type (PT) for PubSub</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
-                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-rtp-header-marker-bit" class="internal xref">RTP Header Marker Bit</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
-                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-rtp-extensions-for-pubsub" class="internal xref">RTP Extensions for PubSub</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.1">
-                    <p id="section-toc.1-1.10.2.3.2.1.1"><a href="#section-10.3.1" class="auto internal xref">10.3.1</a>.  <a href="#name-simulcast-and-resolution" class="internal xref">Simulcast and Resolution</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.2">
-                    <p id="section-toc.1-1.10.2.3.2.2.1"><a href="#section-10.3.2" class="auto internal xref">10.3.2</a>.  <a href="#name-retransmission" class="internal xref">Retransmission</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-rtcp-considerations-2" class="internal xref">RTCP Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
-                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-rtcp-fb" class="internal xref">RTCP FB</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-standardization-considerati" class="internal xref">Standardization Considerations</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
-            <p id="section-toc.1-1.15.1"><a href="#section-15" class="auto internal xref">15</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
-            <p id="section-toc.1-1.16.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
-            <p id="section-toc.1-1.17.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.14.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
 </section>
 </div>
-<div id="terminology">
+<div id="introduction">
 <section id="section-1">
-      <h2 id="name-terminology">
-<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Synchronization source (SSRC): The source of a stream of RTP packets, identified by a 32-bit numeric SSRC identifier carried in the RTP header so as not to be dependent upon the network address. All packets from a synchronization source form part of the same timing and sequence number space, so a receiver groups packets by synchronization source for playback. Examples of synchronization sources include the sender of a stream of packets derived from a signal source such as a microphone or a camera, or an RTP mixer. A synchronization source may change its data format, e.g., audio encoding, over time.  The SSRC identifier is a randomly chosen value meant to be globally unique within a particular RTP session. A participant need not use the same SSRC identifier for all the RTP sessions in a multimedia session; the binding of the SSRC identifiers is provided through RTCP. If a participantgenerates multiple streams in one RTP session, for example from separate video cameras, each <span class="bcp14">MUST</span> be identified as a different SSRC.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">Contributing source (CSRC): A source of a stream of RTP packetsthat has contributed to the combined stream produced by an RTP mixer. The mixer inserts a list of the SSRC identifiers of the sources that contributed to the generation of a particular packet into the RTP header of that packet. This list is called the CSRC list. An example application is audio conferencing where a mixer indicates all the talkers whose speech was combined to produce the outgoing packet, allowing the receiver to indicate the current talker, even though all the audio packets contain the same SSRC identifier (that of the mixer).<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">Mixer: An intermediate system that receives RTP packets from one or more sources, possibly changes the data format, combines the packets in some manner and then forwards a new RTP packet. Since the timing among multiple input sources will not generally be synchronized, the mixer will make timing adjustments among the streams and generate its own timing for the combined stream. Thus, all data packets originating from a mixer will be identified as having the mixer as their synchronization source.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">Translator: An intermediate system that forwards RTP packets with their synchronization source identifier intact. Examples of translators include devices that convert encodings without mixing, replicators from multicast to unicast, and application-level filters in firewalls.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<span id="name-rtp-packet-header"></span><div id="fig-rtp-packet">
+<p id="section-1-1">Publish/Subscribe (Pub/Sub) is an communication pattern for asynchronous transport of messages between endpoints. Endpoints that create and send messages are referred to as publishers. Endpoints that receive and consume messages are referred to as subscribers. Publishers do not send messages directly to subscribers. Instead, publishers send messages to an intermediary, referred to as broker. A publisher will associate the message with a topic, and the broker will forward the message to each subscriber that has subscribed to the topic. As the messages are sent to, and forwarded by, the broker, publishers and subscribers do not need to be aware of each other. This enables flexible and scalable systems.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">A topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publisher (e.g., "water-pump-123"). The structure and syntax of the topic depends on the Pub/Sub framework. Some Pub/Sub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Some Pub/Sub frameworks do not use brokers (broker-less Pub/Sub). Instead, the distribution of messages are realized using network features, e.g., IP multicast. Broker-less Pub/Sub is outside the scope of this document.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">When a publisher publishes data it associates it with a topic.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<span id="name-publish-subscribe-architect"></span><div id="fig-arch-pubsub">
 <figure id="figure-1">
         <div id="section-1-5.1">
           <div class="alignCenter art-svg artwork" id="section-1-5.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="256" width="528" viewBox="0 0 528 256" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-              <path d="M 8,64 L 8,208" fill="none" stroke="black"></path>
-              <path d="M 40,64 L 40,96" fill="none" stroke="black"></path>
-              <path d="M 56,64 L 56,96" fill="none" stroke="black"></path>
-              <path d="M 72,64 L 72,96" fill="none" stroke="black"></path>
-              <path d="M 136,64 L 136,96" fill="none" stroke="black"></path>
-              <path d="M 152,64 L 152,96" fill="none" stroke="black"></path>
-              <path d="M 248,192 L 248,208" fill="none" stroke="black"></path>
-              <path d="M 264,64 L 264,96" fill="none" stroke="black"></path>
-              <path d="M 264,192 L 264,208" fill="none" stroke="black"></path>
-              <path d="M 312,160 L 312,168" fill="none" stroke="black"></path>
-              <path d="M 328,128 L 328,136" fill="none" stroke="black"></path>
-              <path d="M 328,152 L 328,160" fill="none" stroke="black"></path>
-              <path d="M 520,64 L 520,208" fill="none" stroke="black"></path>
-              <path d="M 8,64 L 520,64" fill="none" stroke="black"></path>
-              <path d="M 8,96 L 520,96" fill="none" stroke="black"></path>
-              <path d="M 8,128 L 520,128" fill="none" stroke="black"></path>
-              <path d="M 8,158 L 520,158" fill="none" stroke="black"></path>
-              <path d="M 8,162 L 520,162" fill="none" stroke="black"></path>
-              <path d="M 8,208 L 520,208" fill="none" stroke="black"></path>
-              <path class="jump" d="M 328,152 C 334,152 334,136 328,136" fill="none" stroke="black"></path>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="240" width="504" viewBox="0 0 504 240" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
+              <path d="M 8,144 L 8,208" fill="none" stroke="black"></path>
+              <path d="M 104,32 L 104,96" fill="none" stroke="black"></path>
+              <path d="M 104,144 L 104,208" fill="none" stroke="black"></path>
+              <path d="M 192,32 L 192,208" fill="none" stroke="black"></path>
+              <path d="M 280,32 L 280,208" fill="none" stroke="black"></path>
+              <path d="M 392,32 L 392,96" fill="none" stroke="black"></path>
+              <path d="M 392,144 L 392,208" fill="none" stroke="black"></path>
+              <path d="M 496,32 L 496,96" fill="none" stroke="black"></path>
+              <path d="M 496,144 L 496,208" fill="none" stroke="black"></path>
+              <path d="M 8,32 L 104,32" fill="none" stroke="black"></path>
+              <path d="M 192,32 L 280,32" fill="none" stroke="black"></path>
+              <path d="M 392,32 L 496,32" fill="none" stroke="black"></path>
+              <path d="M 288,48 L 392,48" fill="none" stroke="black"></path>
+              <path d="M 104,64 L 184,64" fill="none" stroke="black"></path>
+              <path d="M 280,80 L 384,80" fill="none" stroke="black"></path>
+              <path d="M 8,96 L 104,96" fill="none" stroke="black"></path>
+              <path d="M 392,96 L 496,96" fill="none" stroke="black"></path>
+              <path d="M 8,144 L 104,144" fill="none" stroke="black"></path>
+              <path d="M 392,144 L 496,144" fill="none" stroke="black"></path>
+              <path d="M 288,160 L 392,160" fill="none" stroke="black"></path>
+              <path d="M 104,176 L 184,176" fill="none" stroke="black"></path>
+              <path d="M 280,192 L 384,192" fill="none" stroke="black"></path>
+              <path d="M 8,208 L 104,208" fill="none" stroke="black"></path>
+              <path d="M 192,208 L 280,208" fill="none" stroke="black"></path>
+              <path d="M 392,208 L 496,208" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="392,192 380,186.4 380,197.6" fill="black" transform="rotate(0,384,192)"></polygon>
+              <polygon class="arrowhead" points="392,80 380,74.4 380,85.6" fill="black" transform="rotate(0,384,80)"></polygon>
+              <polygon class="arrowhead" points="296,160 284,154.4 284,165.6" fill="black" transform="rotate(180,288,160)"></polygon>
+              <polygon class="arrowhead" points="296,48 284,42.4 284,53.6" fill="black" transform="rotate(180,288,48)"></polygon>
+              <polygon class="arrowhead" points="192,176 180,170.4 180,181.6" fill="black" transform="rotate(0,184,176)"></polygon>
+              <polygon class="arrowhead" points="192,64 180,58.4 180,69.6" fill="black" transform="rotate(0,184,64)"></polygon>
               <g class="text">
-                <text x="16" y="36">0</text>
-                <text x="176" y="36">1</text>
-                <text x="336" y="36">2</text>
-                <text x="496" y="36">3</text>
-                <text x="16" y="52">0</text>
-                <text x="32" y="52">1</text>
-                <text x="48" y="52">2</text>
-                <text x="64" y="52">3</text>
-                <text x="80" y="52">4</text>
-                <text x="96" y="52">5</text>
-                <text x="112" y="52">6</text>
-                <text x="128" y="52">7</text>
-                <text x="144" y="52">8</text>
-                <text x="160" y="52">9</text>
-                <text x="176" y="52">0</text>
-                <text x="192" y="52">1</text>
-                <text x="208" y="52">2</text>
-                <text x="224" y="52">3</text>
-                <text x="240" y="52">4</text>
-                <text x="256" y="52">5</text>
-                <text x="272" y="52">6</text>
-                <text x="288" y="52">7</text>
-                <text x="304" y="52">8</text>
-                <text x="320" y="52">9</text>
-                <text x="336" y="52">0</text>
-                <text x="352" y="52">1</text>
-                <text x="368" y="52">2</text>
-                <text x="384" y="52">3</text>
-                <text x="400" y="52">4</text>
-                <text x="416" y="52">5</text>
-                <text x="432" y="52">6</text>
-                <text x="448" y="52">7</text>
-                <text x="464" y="52">8</text>
-                <text x="480" y="52">9</text>
-                <text x="496" y="52">0</text>
-                <text x="512" y="52">1</text>
-                <text x="24" y="84">V=2</text>
-                <text x="48" y="84">P</text>
-                <text x="64" y="84">X</text>
-                <text x="100" y="84">CC</text>
-                <text x="144" y="84">M</text>
-                <text x="204" y="84">PT</text>
-                <text x="356" y="84">sequence</text>
-                <text x="420" y="84">number</text>
-                <text x="264" y="116">timestamp</text>
-                <text x="160" y="148">synchronization</text>
-                <text x="252" y="148">source</text>
-                <text x="304" y="148">(SSRC</text>
-                <text x="380" y="148">identifier</text>
-                <text x="156" y="180">contributing</text>
-                <text x="236" y="180">source</text>
-                <text x="292" y="180">(CSRC)</text>
-                <text x="368" y="180">identifiers</text>
-                <text x="256" y="196">.</text>
-                <text x="272" y="196">.</text>
+                <text x="336" y="36">subscribe</text>
+                <text x="148" y="52">data</text>
+                <text x="56" y="68">Publisher</text>
+                <text x="332" y="68">data</text>
+                <text x="444" y="68">Subscriber</text>
+                <text x="56" y="116">...</text>
+                <text x="236" y="116">Broker</text>
+                <text x="424" y="116">...</text>
+                <text x="56" y="132">...</text>
+                <text x="424" y="132">...</text>
+                <text x="336" y="148">subscribe</text>
+                <text x="148" y="164">data</text>
+                <text x="56" y="180">Publisher</text>
+                <text x="332" y="180">data</text>
+                <text x="444" y="180">Subscriber</text>
               </g>
             </svg><a href="#section-1-5.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
-<a href="#name-rtp-packet-header" class="selfRef">RTP Packet Header</a>
+<a href="#name-publish-subscribe-architect" class="selfRef">Publish/Subscribe Architecture</a>
         </figcaption></figure>
 </div>
-</section>
-</div>
-<div id="introduction">
-<section id="section-2">
-      <h2 id="name-introduction">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
-      </h2>
-<p id="section-2-1">This document describes how a Session Initiation Protocol (SIP) <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> Conference Server can be used to realize a Publish/Subscribe (PubSub) broker to distribute non-audiovisual data.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">One main advantage of the solution is the possibility to use existing RTP-based audiovisual conferencing infrastructure and protocols to realize data distributing
-using the Publish/Subscribe traffic pattern, instead of using dedicated Publish/Subscribe frameworks and protocols.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">NOTE: SIP Conference servers might behave differently depending on configuration, profiles etc. The procedures in this document are based on a generic understanding of how conference servers behave.<a href="#section-2-3" class="pilcrow">¶</a></p>
-<p id="section-2-4">NOTE: The examples in this document use the RTP T.140 real-time text (RTT) payload format to transport the payload data, and SenML to structure and encode the payload data. Other payload formats and
-encodings can also be used.<a href="#section-2-4" class="pilcrow">¶</a></p>
-<p id="section-2-5">While RTP is a generic transport protocol, the main usage has been for transport of real-time AudioVisual data. Non-AudioVisual data has typically been data associated with AudioVisual data, e.g., real-time text (rtt), DTMF signals. However, at the time of writing this document, IETF is working on a number of specifications where RTP is used to transport other types of non-AV data.<a href="#section-2-5" class="pilcrow">¶</a></p>
-<div id="publishsubscribe">
-<section id="section-2.1">
-        <h3 id="name-publish-subscribe">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-publish-subscribe" class="section-name selfRef">Publish/Subscribe</a>
-        </h3>
-<p id="section-2.1-1">Publish/Subscribe (PubSub)<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">When a publisher publishes data it associates it with a topic. The topic typcially describes the semantics of the data (e.g., "water-temperature-data") or identifies the publsiher (e.g., "water-pump-123"). The structure and syntaxof the topic depends on the Pub/Sub framework. Some PubSub frameworks define tree-structured topics (e.g. "factory/temperature/sensor-123"), and allow topic wildcarding (e.g., "factory/temperature/*"). This document does not define topic syntax or structure. Topics are simply seen as token or string values.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">Subscribers that are interested in data assocoated with the topic will subscribe to the topic. The Pub/Sub framework will then route published
-data to each subscriber that has subscribed to the topic. The subscriptions and routing of published data is often handled by an intermediary function, often called a broker. Publishers will publish data to the broker, and the broker will forward the data to each subscriber that has subscribed to the topic associated with the data.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">Many Pub/Sub frameworks.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">Some Pub/Sub frameworks do not use a broker (broker-less Pub/Sub), but rather relies on other mechanisms (e.g., IP multicast) to route published messages from publishers to subscribers. Broker-less Pub/Sub is outside the scope of this document.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
-<span id="name-publish-subscribe-architect"></span><div id="fig-arch-pubsub">
-<figure id="figure-2">
-          <div id="section-2.1-6.1">
-            <div class="alignCenter art-svg artwork" id="section-2.1-6.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="240" width="504" viewBox="0 0 504 240" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
-                <path d="M 8,144 L 8,208" fill="none" stroke="black"></path>
-                <path d="M 104,32 L 104,96" fill="none" stroke="black"></path>
-                <path d="M 104,144 L 104,208" fill="none" stroke="black"></path>
-                <path d="M 192,32 L 192,208" fill="none" stroke="black"></path>
-                <path d="M 280,32 L 280,208" fill="none" stroke="black"></path>
-                <path d="M 392,32 L 392,96" fill="none" stroke="black"></path>
-                <path d="M 392,144 L 392,208" fill="none" stroke="black"></path>
-                <path d="M 496,32 L 496,96" fill="none" stroke="black"></path>
-                <path d="M 496,144 L 496,208" fill="none" stroke="black"></path>
-                <path d="M 8,32 L 104,32" fill="none" stroke="black"></path>
-                <path d="M 192,32 L 280,32" fill="none" stroke="black"></path>
-                <path d="M 392,32 L 496,32" fill="none" stroke="black"></path>
-                <path d="M 288,48 L 392,48" fill="none" stroke="black"></path>
-                <path d="M 104,64 L 184,64" fill="none" stroke="black"></path>
-                <path d="M 280,80 L 384,80" fill="none" stroke="black"></path>
-                <path d="M 8,96 L 104,96" fill="none" stroke="black"></path>
-                <path d="M 392,96 L 496,96" fill="none" stroke="black"></path>
-                <path d="M 8,144 L 104,144" fill="none" stroke="black"></path>
-                <path d="M 392,144 L 496,144" fill="none" stroke="black"></path>
-                <path d="M 288,160 L 392,160" fill="none" stroke="black"></path>
-                <path d="M 104,176 L 184,176" fill="none" stroke="black"></path>
-                <path d="M 280,192 L 384,192" fill="none" stroke="black"></path>
-                <path d="M 8,208 L 104,208" fill="none" stroke="black"></path>
-                <path d="M 192,208 L 280,208" fill="none" stroke="black"></path>
-                <path d="M 392,208 L 496,208" fill="none" stroke="black"></path>
-                <polygon class="arrowhead" points="392,192 380,186.4 380,197.6" fill="black" transform="rotate(0,384,192)"></polygon>
-                <polygon class="arrowhead" points="392,80 380,74.4 380,85.6" fill="black" transform="rotate(0,384,80)"></polygon>
-                <polygon class="arrowhead" points="296,160 284,154.4 284,165.6" fill="black" transform="rotate(180,288,160)"></polygon>
-                <polygon class="arrowhead" points="296,48 284,42.4 284,53.6" fill="black" transform="rotate(180,288,48)"></polygon>
-                <polygon class="arrowhead" points="192,176 180,170.4 180,181.6" fill="black" transform="rotate(0,184,176)"></polygon>
-                <polygon class="arrowhead" points="192,64 180,58.4 180,69.6" fill="black" transform="rotate(0,184,64)"></polygon>
-                <g class="text">
-                  <text x="336" y="36">subscribe</text>
-                  <text x="148" y="52">data</text>
-                  <text x="56" y="68">Publisher</text>
-                  <text x="332" y="68">data</text>
-                  <text x="444" y="68">Subscriber</text>
-                  <text x="56" y="116">...</text>
-                  <text x="236" y="116">Broker</text>
-                  <text x="424" y="116">...</text>
-                  <text x="56" y="132">...</text>
-                  <text x="424" y="132">...</text>
-                  <text x="336" y="148">subscribe</text>
-                  <text x="148" y="164">data</text>
-                  <text x="56" y="180">Publisher</text>
-                  <text x="332" y="180">data</text>
-                  <text x="444" y="180">Subscriber</text>
-                </g>
-              </svg><a href="#section-2.1-6.1.1" class="pilcrow">¶</a>
-</div>
-</div>
-<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
-<a href="#name-publish-subscribe-architect" class="selfRef">Publish/Subscribe Architecture</a>
-          </figcaption></figure>
-</div>
-<div class="alignLeft art-text artwork" id="section-2.1-7">
-<pre>
-=&gt; 0.01 GET
-   Uri-Path: ps
-   Uri-Path: h9392
-
-&lt;= 2.05 Content
-   Content-Format: TBD2 (application/core-pubsub+cbor)
-   {
-      "topic-name" : "living-room-sensor",
-      "topic-data" : "ps/data/1bd0d6d",
-      "resource-type": "core.ps.conf",
-      "media-type": "application/senml-cbor",
-      "topic-type": "temperature",
-      "expiration-date": "2023-04-00T23:59:59Z",
-      "max-subscribers": 100
-   }
-</pre><a href="#section-2.1-7" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
+<p id="section-1-6">This document describes how a Session Initiation Protocol (SIP) <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span> conference server <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span> can be used to realize a Pub/Sub broker to distribute non-audiovisual data (e.g., IoT sensor readings). SIP agents are used to realize publishers and subscribers. This is referred to Pub/Sub conference.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">The main advantage of the solution is the possibility to use existing SIP-based audiovisual conferencing infrastructure and protocols to realize a Pub/Sub solution.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">The real-time transport protocol (RTP) <span>[<a href="#RFC3550" class="cite xref">RFC3550</a>]</span> is used to transport the data. Within this document the RTP payload for T.140 text conversation <span>[<a href="#RFC4103" class="cite xref">RFC4103</a>]</span> is used to transport the data. The examples use Sensor Measurement Lists (SenML) <span>[<a href="#RFC8428" class="cite xref">RFC8428</a>]</span> to encode the data. However, other payloads and encoding mechanisms can also be used.<a href="#section-1-8" class="pilcrow">¶</a></p>
+<p id="section-1-9">NOTE: This document is based on the generic SIP conferencing procedures defined in <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span> and <span>[<a href="#RFC4579" class="cite xref">RFC4579</a>]</span>.<a href="#section-1-9" class="pilcrow">¶</a></p>
+<p id="section-1-10">NOTE: While RTP is a generic data transport protocol, the main usage has been for transport of audiovisual data (and real-time text), between human users. However, at the time of writing this document, there is work in IETF on RTP payloads also for transport of non-audivisual data.<a href="#section-1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
-<section id="section-3">
+<section id="section-2">
       <h2 id="name-conventions-and-definitions">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
       </h2>
-<p id="section-3-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
-appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">This document uses the SIP conference terminology defined in <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span>.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3-3">
-        <dt id="section-3-3.1">Publish/Subscribe (PubSub):</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.2">
-          <p id="section-3-3.2.1">A message communication model where messages associated with specific topics are sent to a broker. Interested parties, i.e. subscribers, receive these topic-based messages from the broker without the original sender knowing the recipients. The broker handles matching and delivering these messages to the appropriate subscribers.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-3.3">Publisher:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.4">
-          <p id="section-3-3.4.1">A xxx. Within the scope of this document, a Publisher is a conference participant that sends data towards a conference server using RTP.<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-3.5">Subscribe:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.6">
-          <p id="section-3-3.6.1">A xxx. Within the scope of this document, a Subscriber is a conference participant that receives data from a conference server using RTP.<a href="#section-3-3.6.1" class="pilcrow">¶</a></p>
-</dd>
-      <dd class="break"></dd>
-</dl>
-<p id="section-3-4">NOTE: A conference participant might act both as Publisher and Subscriber.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3-5">
-        <dt id="section-3-5.1">Topic:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.2">
-          <p id="section-3-5.2.1">A xxx. A Topic typically refers to the semantic of the published data (e.g., 'water-temperature'), but it might also refer to the Publisher (e.g., 'water-pump-123') or a combination (e.g., 'water-pump-123/water-temperature'). Topics might also have a tree structure (e.g., 'factory/line-2/water-pump-123/water-temperature'), or allow wildcarding (e.g., 'factory/line-2/water-pump-123/*'). Some systems might use a standardized naming scheme and structure for the Topics, while other systems allow applications to define their own Topic namings and structures. This document does not mandate or define a specific naming or structure for Topcis, and the Topics shown examples are only examples.<a href="#section-3-5.2.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.3">Broker:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.4">
-          <p id="section-3-5.4.1">An intermediary function that receives published data from Publishers, and forwards it to Subscribers. Within the scope of this document, the Broker is a conference server that supports SIP/SDP signalling and RTP data transport. Note that even if other signalling protocols than SIP/SDP are used, the RTP and data handling considerations within this document might still apply.<a href="#section-3-5.4.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.5">Published data</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.6">
-          <p id="section-3-5.6.1">Data that a Publisher sends (publishes), and a Subscriber receives, for a Topic. Within the scope of this document, the published data is the RTP payload <span>[<a href="#RFC3550" class="cite xref">RFC3550</a>]</span>, i.e., the data transported in an RTP packet.<a href="#section-3-5.6.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.7">Conference:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.8">
-          <p id="section-3-5.8.1">A xxx<a href="#section-3-5.8.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.9">AudioVisual Conference/AV Conference:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.10">
-          <p id="section-3-5.10.1">A "traditional" SIP conference, where human participants send and receive speech audio, and in some cases video. The conference server has different policies for distributing audio and video. In a typcial sceanio it mixes and forwards the audio of all participants, while forwarding the video of the currently speaking conference participant (referred to as "current speaker").<a href="#section-3-5.10.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.11">PubSub Conference:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.12">
-          <p id="section-3-5.12.1">A SIP conference used to realize data distribution using the Publish/Subscribe traffic pattern, following the procedures in this document.<a href="#section-3-5.12.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-5.13">PubSub Conference Participant/PubSub Participant:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-5.14">
-          <p id="section-3-5.14.1">An endpoint that has joined (or is about to join) a PubSub Conference. Within the PubSub Conference, the PubSub Participant will take the role as a Publisher, Subscriber or both.<a href="#section-3-5.14.1" class="pilcrow">¶</a></p>
-</dd>
-      <dd class="break"></dd>
-</dl>
-<p id="section-3-6">NOTE: There are more and more use-cases where both AudioVisual data and non-AudioVisual data is exchanged within the same conference. The description of a mixed AudioVisual/PubSub conference is outside the scope of this document.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3-7">
-        <dt id="section-3-7.1">AudioVisual Data:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-7.2">
-          <p id="section-3-7.2.1">Data that contains encoded audio or video.<a href="#section-3-7.2.1" class="pilcrow">¶</a></p>
-</dd>
-      <dd class="break"></dd>
-</dl>
-<p id="section-3-8">Network Time Protocol (NTP): The absolute time in seconds relative to midnight UTC on 1 January 1900.<a href="#section-3-8" class="pilcrow">¶</a></p>
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">TO BE REMOVED BEGIN<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">Synchronization source (SSRC): The source of a stream of RTP packets, identified by a 32-bit numeric SSRC identifier carried in the RTP header so as not to be dependent upon the network address. All packets from a synchronization source form part of the same timing and sequence number space, so a receiver groups packets by synchronization source for playback. Examples of synchronization sources include the sender of a stream of packets derived from a signal source such as a microphone or a camera, or an RTP mixer. A synchronization source may change its data format, e.g., audio encoding, over time.  The SSRC identifier is a randomly chosen value meant to be globally unique within a particular RTP session. A participant need not use the same SSRC identifier for all the RTP sessions in a multimedia session; the binding of the SSRC identifiers is provided through RTCP. If a participantgenerates multiple streams in one RTP session, for example from separate video cameras, each <span class="bcp14">MUST</span> be identified as a different SSRC.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">Contributing source (CSRC): A source of a stream of RTP packetsthat has contributed to the combined stream produced by an RTP mixer. The mixer inserts a list of the SSRC identifiers of the sources that contributed to the generation of a particular packet into the RTP header of that packet. This list is called the CSRC list. An example application is audio conferencing where a mixer indicates all the talkers whose speech was combined to produce the outgoing packet, allowing the receiver to indicate the current talker, even though all the audio packets contain the same SSRC identifier (that of the mixer).<a href="#section-2-4" class="pilcrow">¶</a></p>
+<p id="section-2-5">Mixer: An intermediate system that receives RTP packets from one or more sources, possibly changes the data format, combines the packets in some manner and then forwards a new RTP packet. Since the timing among multiple input sources will not generally be synchronized, the mixer will make timing adjustments among the streams and generate its own timing for the combined stream. Thus, all data packets originating from a mixer will be identified as having the mixer as their synchronization source.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<p id="section-2-6">Translator: An intermediate system that forwards RTP packets with their synchronization source identifier intact. Examples of translators include devices that convert encodings without mixing, replicators from multicast to unicast, and application-level filters in firewalls.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">TO BE REMOVED END<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8">This document uses the SIP terminology defined in <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span> and the RTP terminology defined in <span>[<a href="#RFC3550" class="cite xref">RFC3550</a>]</span>.<a href="#section-2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-conf-considerations">
-<section id="section-4">
-      <h2 id="name-conference-considerations">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-conference-considerations" class="section-name selfRef">Conference Considerations</a>
+<div id="sec-conf-considerations-generic">
+<section id="section-3">
+      <h2 id="name-generic-conference-consider">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-generic-conference-consider" class="section-name selfRef">Generic Conference Considerations</a>
       </h2>
-<p id="section-4-1">This Section describes the major differences between an AV Conference and a PubSub Conference. The Section does not only focus on technical aspects, but also on traffic patterns and Conference Participant behaviors<a href="#section-4-1" class="pilcrow">¶</a></p>
-<div id="conference-duration">
-<section id="section-4.1">
-        <h3 id="name-conference-duration">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-conference-duration" class="section-name selfRef">Conference Duration</a>
+<p id="section-3-1">This Section discusses the major differences between an AV Conference and a PubSub Conference.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="join-conference">
+<section id="section-3.1">
+        <h3 id="name-join-conference">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-join-conference" class="section-name selfRef">Join Conference</a>
         </h3>
-<p id="section-4.1-1">The duration of an AV Conference is typically relatively short (between minutes and hours), and is often pre-determined. For example, when humans are invited to an AV Conference the invitation often indicates the planned duration of the Conference.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">The duration of a PubSub Conference can be very long, even infinite. MORE.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
-<div id="sending-and-receiving">
-<section id="section-4.1.1">
-          <h4 id="name-sending-and-receiving">
-<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-sending-and-receiving" class="section-name selfRef">Sending and Receiving</a>
-        </h4>
+<p id="section-3.1-1">A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span>) or simply add the endpoint to the existing conference.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<div id="conference-duration">
+<section id="section-3.1.1">
+          <h4 id="name-conference-duration">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-conference-duration" class="section-name selfRef">Conference Duration</a>
+          </h4>
+<p id="section-3.1.1-1">The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-2">The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.<a href="#section-3.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conference-termination">
+<section id="section-3.1.2">
+          <h4 id="name-conference-termination">
+<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-conference-termination" class="section-name selfRef">Conference Termination</a>
+          </h4>
+<p id="section-3.1.2-1">An AV conference is typically terminated once the last participant leaves the conference, when the conference createer leaves the conference, or at a pre-configured clock time.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.2-2">Within a PubSub conference, participants might join the conference only when they want to send or receive data. In between they might leave the conference. Because of this there might be periods when there are no participants wihtin the conference. However, as participants might re-join later, and new participants might join the conference. Therefore, as long as it can be assumed that there is an interest in the Topic associated with the conference, the conference might be kept alive even if there are no participants.<a href="#section-3.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sending-and-receiving-data">
+<section id="section-3.1.3">
+          <h4 id="name-sending-and-receiving-data">
+<a href="#section-3.1.3" class="section-number selfRef">3.1.3. </a><a href="#name-sending-and-receiving-data" class="section-name selfRef">Sending and Receiving Data</a>
+          </h4>
+<p id="section-3.1.3-1">Within an AV Conference, participants typically both send and receive media. This can also be the case in a PubSub Conference, if the Publish/Subscribe traffic pattern is used to realize bi-directional data exchange between conference participants. However, typically participants within a PubSub Conference will either send (Publish) or receive (Subscribe) data. For example, sensors will typically only publish data, while analyticsetc applications will only subscribe to data.<a href="#section-3.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.3-2">Note that a PubSub Conference participant might publish data to one Topic, while subscribing to another Topic.<a href="#section-3.1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="simultanous-senders">
-<section id="section-4.1.2">
+<section id="section-3.1.4">
           <h4 id="name-simultanous-senders">
-<a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-simultanous-senders" class="section-name selfRef">Simultanous Senders</a>
+<a href="#section-3.1.4" class="section-number selfRef">3.1.4. </a><a href="#name-simultanous-senders" class="section-name selfRef">Simultanous Senders</a>
           </h4>
-<p id="section-4.1.2-1">Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-2">TODO: Describe different ways for forwarding/mixing Pub/Sub data.<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.1.4-1">Within an AV Conference typically only one participant sends speech audio at any given time. Within a PubSub Conference, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available. In addition, a Publisher typically has no idea when other Publishers are publishing data. A Publishers might not even be aware of the other Publishers (if any). Because of this, the conference server might receive published data from multiple Publishers simultaneously. Depending on how quickly the conference server can forward the data to the subscribers it might have to buffer the data, which can cause delays.<a href="#section-3.1.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="number-of-conference-participants">
-<section id="section-4.1.3">
+<section id="section-3.1.5">
           <h4 id="name-number-of-conference-partic">
-<a href="#section-4.1.3" class="section-number selfRef">4.1.3. </a><a href="#name-number-of-conference-partic" class="section-name selfRef">Number of Conference Participants</a>
+<a href="#section-3.1.5" class="section-number selfRef">3.1.5. </a><a href="#name-number-of-conference-partic" class="section-name selfRef">Number of Conference Participants</a>
           </h4>
-<p id="section-4.1.3-1">Within an AV Conference, the number of participants is relatively constant throughout the lifetime of the conference. The number of participants might also be known before the conference begins, e.g., based on the number of participants that have accepted an invitation to the conference.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.3-2">Within a PubSub Conference, the number of participants might vary throughout the lifetime of the conference. A Publisher might participate in the conference only when it is publishing data. The duration of a PubSub Conference might also be much longer than the duration of an AV Conference (see section XXX).<a href="#section-4.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.1.5-1">Within an AV Conference, the number of participants is relatively constant throughout the lifetime of the conference. The number of participants might also be known before the conference begins, e.g., based on the number of participants that have accepted an invitation to the conference.<a href="#section-3.1.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.5-2">Within a PubSub Conference, the number of participants might vary widely throughout the lifetime of the conference. A Publisher might join a conference only when it is publishing data, then leave the conference and re-join later again. If a Subscriber is only interested in receiving data at specific times, it might also join the conference only for those time.<a href="#section-3.1.5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="data-sending-frequency">
-<section id="section-4.1.4">
+<section id="section-3.1.6">
           <h4 id="name-data-sending-frequency">
-<a href="#section-4.1.4" class="section-number selfRef">4.1.4. </a><a href="#name-data-sending-frequency" class="section-name selfRef">Data Sending Frequency</a>
+<a href="#section-3.1.6" class="section-number selfRef">3.1.6. </a><a href="#name-data-sending-frequency" class="section-name selfRef">Data Sending Frequency</a>
           </h4>
-<p id="section-4.1.4-1">In an AV Conference, audio and video data is typically sent constantly, eventhough there are ways to temporarily stop the sending of data (e.g., by turning off the camera, muting the microphone etc).<a href="#section-4.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.4-2">In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc.<a href="#section-4.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.1.6-1">In an AV Conference, audio and video data is typically sent constantly, eventhough there are ways to temporarily stop the sending of data (e.g., by turning off the camera, muting the microphone etc).<a href="#section-3.1.6-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.6-2">In a PubSub Conference, the data publishing frequency can vary widely. In some cases, a Publisher will publish data very frequently (measured in milliseconds). In other cases, a Publisher might publish data more seldom: once a minute, once an hour, once a day, etc.<a href="#section-3.1.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="data-synchronization">
-<section id="section-4.1.5">
+<section id="section-3.1.7">
           <h4 id="name-data-synchronization">
-<a href="#section-4.1.5" class="section-number selfRef">4.1.5. </a><a href="#name-data-synchronization" class="section-name selfRef">Data Synchronization</a>
+<a href="#section-3.1.7" class="section-number selfRef">3.1.7. </a><a href="#name-data-synchronization" class="section-name selfRef">Data Synchronization</a>
           </h4>
-<p id="section-4.1.5-1">Within an AV Conference, if the conference server is mixing the audio from all participants, the conference server needs to be able to ensure that the audio packets that are mixed together have been generated at the same time. The conference server does not necessarily need to know that real clock value, only that the packets have been generated at the same time.<a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.5-2">Within a PubSub Conference, the conference server will not mix data from different Publishers. In some case, for network optimization purpose, the conference server might forward data from multiple Publishers in a single packet towards the Subscribers.<a href="#section-4.1.5-2" class="pilcrow">¶</a></p>
-<div id="rtp-timestamp">
-<section id="section-4.1.5.1">
-            <h5 id="name-rtp-timestamp">
-<a href="#section-4.1.5.1" class="section-number selfRef">4.1.5.1. </a><a href="#name-rtp-timestamp" class="section-name selfRef">RTP Timestamp</a>
+<p id="section-3.1.7-1">Within an AV Conference, if the conference server is mixing the audio from all participants, the conference server needs to be able to ensure that the audio packets that are mixed together have been generated at the same time. The conference server does not necessarily need to know that real clock value, only that the packets have been generated at the same time.<a href="#section-3.1.7-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.7-2">Within a PubSub Conference, the conference server will not mix data from different Publishers. In some case, for network optimization purpose, the conference server might forward data from multiple Publishers in a single packet towards the Subscribers.<a href="#section-3.1.7-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-conf-considerations-sip-signalling">
+<section id="section-4">
+      <h2 id="name-sip-signalling-consideratio">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-sip-signalling-consideratio" class="section-name selfRef">SIP Signalling Considerations</a>
+      </h2>
+<p id="section-4-1">The discussions within this Section are based on the procedures and concepts defined in <span>[<a href="#RFC4353" class="cite xref">RFC4353</a>]</span> and <span>[<a href="#RFC4579" class="cite xref">RFC4579</a>]</span>.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="sec-conf-considerations-sip-subject">
+<section id="section-4.1">
+        <h3 id="name-sip-subject-header-field">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-sip-subject-header-field" class="section-name selfRef">SIP Subject Header Field</a>
+        </h3>
+<p id="section-4.1-1">The SIP Subject header field can be used to indicate the Topic associated with the PubSub Conference. When a new new conference is created (using SIP signalling) the conference creator uses the Subject header field to indicate the Topic of the conference.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span id="name-sip-subject-header-field-fo"></span><div id="fig-sip-subject">
+<figure id="figure-2">
+          <div id="section-4.1-2.1">
+            <div class="alignCenter art-svg artwork" id="section-4.1-2.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="272" viewBox="0 0 272 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 48,48 L 48,64" fill="none" stroke="black"></path>
+                <path d="M 88,80 L 88,136" fill="none" stroke="black"></path>
+                <path d="M 128,96 L 128,112" fill="none" stroke="black"></path>
+                <path d="M 128,144 L 128,160" fill="none" stroke="black"></path>
+                <g class="text">
+                  <text x="96" y="36">pubsub-conferences-info</text>
+                  <text x="60" y="68">--</text>
+                  <text x="148" y="68">pubsub-conferences</text>
+                  <text x="100" y="84">--</text>
+                  <text x="184" y="84">pubsub-conference</text>
+                  <text x="140" y="100">--</text>
+                  <text x="212" y="100">conference-URI</text>
+                  <text x="140" y="116">--</text>
+                  <text x="176" y="116">topic</text>
+                  <text x="100" y="132">--</text>
+                  <text x="184" y="132">pubsub-conference</text>
+                  <text x="88" y="148">.</text>
+                  <text x="140" y="148">--</text>
+                  <text x="212" y="148">conference-URI</text>
+                  <text x="88" y="164">.</text>
+                  <text x="140" y="164">--</text>
+                  <text x="176" y="164">topic</text>
+                  <text x="88" y="180">.</text>
+                </g>
+              </svg><a href="#section-4.1-2.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-sip-subject-header-field-fo" class="selfRef">SIP Subject header field for Topic</a>
+          </figcaption></figure>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-conf-considerations-sdp">
+<section id="section-5">
+      <h2 id="name-sdp-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-sdp-considerations" class="section-name selfRef">SDP Considerations</a>
+      </h2>
+<div id="sec-sdp-considerations-dir-attr">
+<section id="section-5.1">
+        <h3 id="name-sdp-direaction-attribute">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-sdp-direaction-attribute" class="section-name selfRef">SDP Direaction Attribute</a>
+        </h3>
+<p id="section-5.1-1">These attributes can be used to indicate the PubSub role of a participant.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">A participant can use SDP 'sendonly' attribute to indicate that it is acting as a Publisher.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">A participant can use SDP 'recvonly' attribute to indicate that it is acting as a Subscriber.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">A participant can use SDP 'sendrecv' attribute to indicate that it is acting as both a Publisher and a Subscriber.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">A participant can use SDP 'inactive' attribute to indicate that it is not acting as a Publisher nor a Subscriber. A participant can use the attribute e.g., to temporary indicate to the conference server that it does not want to receive data associated with the conference, but also to indicate that it will not send data associated with the conference.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-conf-considerations-sip-event">
+<section id="section-6">
+      <h2 id="name-sip-event-package-considera">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-sip-event-package-considera" class="section-name selfRef">SIP Event Package Considerations</a>
+      </h2>
+<p id="section-6-1">This section describes extensions for the SIP Event Package for Conference State <span>[<a href="#RFC4575" class="cite xref">RFC4575</a>]</span> that are useful for a PubSub Conference. In addition, this section describes a new SIP Event Package, SIP Event Package for PublishSubscribe, that can be used to inform participants about the PubSub Conferences hosted by a conference server, e.g., the Topic and conference-uri associated with each conference.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="sec-conf-considerations-sip-event-conf-state">
+<section id="section-6.1">
+        <h3 id="name-sip-event-package-for-confe">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-sip-event-package-for-confe" class="section-name selfRef">SIP Event Package for Conference State</a>
+        </h3>
+<p id="section-6.1-1"><span>[<a href="#RFC4575" class="cite xref">RFC4575</a>]</span> defines a SIP Event Package <span>[<a href="#RFC3265" class="cite xref">RFC3265</a>]</span> for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<div id="extensions-for-pubsub">
+<section id="section-6.1.1">
+          <h4 id="name-extensions-for-pubsub">
+<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-extensions-for-pubsub" class="section-name selfRef">Extensions for PubSub</a>
+          </h4>
+<div id="maximum-number-of-conference-participants">
+<section id="section-6.1.1.1">
+            <h5 id="name-maximum-number-of-conferenc">
+<a href="#section-6.1.1.1" class="section-number selfRef">6.1.1.1. </a><a href="#name-maximum-number-of-conferenc" class="section-name selfRef">Maximum Number of Conference Participants</a>
             </h5>
-<p id="section-4.1.5.1-1">The RTP Timestamp, together with the RTCP SR (Sending Report) can be used by Conference servers and participants to synchronize audio and video received from multiple participants.<a href="#section-4.1.5.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.5.1-2">Note that the RTCP SR messages might be terminated by the Conference server.<a href="#section-4.1.5.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.5.1-3">Google RTP extension<a href="#section-4.1.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.1.1.1-1">The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher" and "maximum-user-count-subscriber".<a href="#section-6.1.1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-conf-considerations-sip-event-pubsub">
+<section id="section-6.2">
+        <h3 id="name-sip-event-package-for-publi">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-sip-event-package-for-publi" class="section-name selfRef">SIP Event Package for PublishSubscribe</a>
+        </h3>
+<p id="section-6.2-1">While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<span id="name-sip-event-package-for-publis"></span><div id="fig-sip-eventpackage-pubsub">
+<figure id="figure-3">
+          <div id="section-6.2-3.1">
+            <div class="alignCenter art-svg artwork" id="section-6.2-3.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="272" viewBox="0 0 272 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 48,48 L 48,64" fill="none" stroke="black"></path>
+                <path d="M 88,80 L 88,136" fill="none" stroke="black"></path>
+                <path d="M 128,96 L 128,112" fill="none" stroke="black"></path>
+                <path d="M 128,144 L 128,160" fill="none" stroke="black"></path>
+                <g class="text">
+                  <text x="96" y="36">pubsub-conferences-info</text>
+                  <text x="60" y="68">--</text>
+                  <text x="148" y="68">pubsub-conferences</text>
+                  <text x="100" y="84">--</text>
+                  <text x="184" y="84">pubsub-conference</text>
+                  <text x="140" y="100">--</text>
+                  <text x="212" y="100">conference-URI</text>
+                  <text x="140" y="116">--</text>
+                  <text x="176" y="116">topic</text>
+                  <text x="100" y="132">--</text>
+                  <text x="184" y="132">pubsub-conference</text>
+                  <text x="88" y="148">.</text>
+                  <text x="140" y="148">--</text>
+                  <text x="212" y="148">conference-URI</text>
+                  <text x="88" y="164">.</text>
+                  <text x="140" y="164">--</text>
+                  <text x="176" y="164">topic</text>
+                  <text x="88" y="180">.</text>
+                </g>
+              </svg><a href="#section-6.2-3.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-sip-event-package-for-publis" class="selfRef">SIP Event Package for PublishSubscribe</a>
+          </figcaption></figure>
+</div>
+<div id="example">
+<section id="section-6.2.1">
+          <h4 id="name-example">
+<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-example" class="section-name selfRef">Example</a>
+          </h4>
+<span id="name-example-sip-event-package-f"></span><div id="fig-sip-pubsup-event">
+<figure id="figure-4">
+            <div id="section-6.2.1-1.1">
+              <div class="alignCenter art-svg artwork" id="section-6.2.1-1.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="384" width="1088" viewBox="0 0 1088 384" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                  <path d="M 32,144 L 48,144" fill="none" stroke="black"></path>
+                  <path d="M 40,288 L 56,256" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="56,144 44,138.4 44,149.6" fill="black" transform="rotate(0,48,144)"></polygon>
+                  <g class="text">
+                    <text x="48" y="36">&lt;?xml</text>
+                    <text x="128" y="36">version="1.0"</text>
+                    <text x="260" y="36">encoding="UTF-8"?&gt;</text>
+                    <text x="124" y="52">&lt;pubsub-conferences-info</text>
+                    <text x="252" y="68">xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"</text>
+                    <text x="180" y="84">entity="sips:confserver@example.com"</text>
+                    <text x="84" y="100">state="full"</text>
+                    <text x="188" y="100">version="1"&gt;</text>
+                    <text x="44" y="116">&lt;!--</text>
+                    <text x="68" y="132">PUBSUB</text>
+                    <text x="144" y="132">CONFERENCES</text>
+                    <text x="116" y="164">&lt;pubsub-conferences&gt;</text>
+                    <text x="116" y="180">&lt;pubsub-conference</text>
+                    <text x="348" y="180">entity="sip:pubsubconf123@example.com"</text>
+                    <text x="560" y="180">state="full"&gt;</text>
+                    <text x="100" y="196">&lt;topic&gt;water</text>
+                    <text x="232" y="196">temperature&lt;/topic&gt;</text>
+                    <text x="124" y="212">&lt;/pubsub-conference&gt;</text>
+                    <text x="116" y="228">&lt;pubsub-conference</text>
+                    <text x="348" y="228">entity="sip:pubsubconf456@example.com"</text>
+                    <text x="560" y="228">state="full"&gt;</text>
+                    <text x="92" y="244">&lt;topic&gt;air</text>
+                    <text x="216" y="244">temperature&lt;/topic&gt;</text>
+                    <text x="48" y="260">&lt;</text>
+                    <text x="132" y="260">pubsub-conference&gt;</text>
+                    <text x="40" y="276">&lt;</text>
+                    <text x="128" y="276">pubsub-conferences&gt;</text>
+                    <text x="32" y="292">&lt;</text>
+                    <text x="140" y="292">pubsub-conferences-info&gt;</text>
+                    <text x="24" y="324">NOTE:</text>
+                    <text x="64" y="324">The</text>
+                    <text x="140" y="324">conference-uri</text>
+                    <text x="212" y="324">is</text>
+                    <text x="256" y="324">defined</text>
+                    <text x="300" y="324">as</text>
+                    <text x="324" y="324">an</text>
+                    <text x="408" y="324">pubsub-conference</text>
+                    <text x="512" y="324">element</text>
+                    <text x="588" y="324">attribute.</text>
+                    <text x="644" y="324">As</text>
+                    <text x="668" y="324">an</text>
+                    <text x="712" y="324">option,</text>
+                    <text x="756" y="324">it</text>
+                    <text x="792" y="324">could</text>
+                    <text x="828" y="324">be</text>
+                    <text x="872" y="324">defined</text>
+                    <text x="916" y="324">as</text>
+                    <text x="936" y="324">a</text>
+                    <text x="980" y="324">separate</text>
+                    <text x="1052" y="324">element.</text>
+                    <text x="24" y="356">NOTE:</text>
+                    <text x="60" y="356">As</text>
+                    <text x="84" y="356">an</text>
+                    <text x="128" y="356">option,</text>
+                    <text x="176" y="356">the</text>
+                    <text x="216" y="356">topic</text>
+                    <text x="264" y="356">could</text>
+                    <text x="308" y="356">also</text>
+                    <text x="340" y="356">be</text>
+                    <text x="384" y="356">defined</text>
+                    <text x="428" y="356">as</text>
+                    <text x="452" y="356">an</text>
+                    <text x="536" y="356">pubsub-conference</text>
+                    <text x="640" y="356">element</text>
+                    <text x="716" y="356">attribute.</text>
+                  </g>
+                </svg><a href="#section-6.2.1-1.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-example-sip-event-package-f" class="selfRef">Example: SIP Event Package for PublishSubscribe</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-conf-considerations-rtp">
+<section id="section-6.3">
+        <h3 id="name-rtp-considerations">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-rtp-considerations" class="section-name selfRef">RTP Considerations</a>
+        </h3>
+<div id="rtp-timestamp">
+<section id="section-6.3.1">
+          <h4 id="name-rtp-timestamp">
+<a href="#section-6.3.1" class="section-number selfRef">6.3.1. </a><a href="#name-rtp-timestamp" class="section-name selfRef">RTP Timestamp</a>
+          </h4>
+<p id="section-6.3.1-1">The RTP Timestamp, together with the RTCP SR (Sending Report) can be used by Conference servers and participants to synchronize audio and video received from multiple participants.<a href="#section-6.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.1-2">Note that the RTCP SR messages might be terminated by the Conference server.<a href="#section-6.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.3.1-3">Google RTP extension<a href="#section-6.3.1-3" class="pilcrow">¶</a></p>
 <div id="payload">
-<section id="section-4.1.5.1.1">
-              <h6 id="name-payload">
-<a href="#section-4.1.5.1.1" class="section-number selfRef">4.1.5.1.1. </a><a href="#name-payload" class="section-name selfRef">Payload</a>
-              </h6>
-<p id="section-4.1.5.1.1-1">In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp.<a href="#section-4.1.5.1.1-1" class="pilcrow">¶</a></p>
+<section id="section-6.3.1.1">
+            <h5 id="name-payload">
+<a href="#section-6.3.1.1" class="section-number selfRef">6.3.1.1. </a><a href="#name-payload" class="section-name selfRef">Payload</a>
+            </h5>
+<p id="section-6.3.1.1-1">In this case, the sampling timestamp is carried in the payload data, instead of the RTP/RTCP packets. The disadvantage of this mechanim is that one needs to ensure that the data payload format always supports the transport of the sampling timestamp.<a href="#section-6.3.1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
+<div id="keep-alive-and-heartbeat">
+<section id="section-6.3.2">
+          <h4 id="name-keep-alive-and-heartbeat">
+<a href="#section-6.3.2" class="section-number selfRef">6.3.2. </a><a href="#name-keep-alive-and-heartbeat" class="section-name selfRef">Keep-alive and Heartbeat</a>
+          </h4>
+<p id="section-6.3.2-1">In a non-AV PubSub Conference, Publishers might stay within a PubSub conference for a long periods without publishing any data. Subscribers will not publish any data at all. There are a couple of possible implications that must be considered: NAT binding keep-alives and heartbeats (i.e., inform other PubSub Participants that a PubSub Participant is still 'alive'). NAT binding keep-alives are needed in cases where a PubSub Participants needs to send periodic data in order to maintain NAT bindings between itself and the PubSub Conference servers. This is important for Subscribers, but also for Publishers that publish data with very long intervals.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-2"><span>[<a href="#RFC6263" class="cite xref">RFC6263</a>]</span> describes different RTP/RTCP mechanisms to send NAT keep-alives.<a href="#section-6.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-3">The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/RTCP. Instead, a participant will send an empty transport packet (e.g., UDP packet).  Note that this mechanism is useful mainly for NAT traversal purpose. The conference server application will typcially not be informed about these packets, and will not forward the packets to other conference particiapants. This mechanism is applicable to non-AV data in PubSub Conferences.<a href="#section-6.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-4">The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific RTP payload format for comfort noise <span>[<a href="#RFC3389" class="cite xref">RFC3389</a>]</span>. The payload format has been defined for audio data, and must be supported by both senders and receivers. Is not applicable for non-AV data in PubSub conferences.<a href="#section-6.3.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-5">The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/RTCP multiplexing, where the same 5-typle is used for the RTP and RTCP packets. When there is no data to be sent, an RTCP packet can be sent as a keep-alive. Note that Subscribers that do not send RTP packets can still send RTCP packets.<a href="#section-6.3.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-6">The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with Unknown Payload Type' mechanisms uses invalid with an unvalid RTP version number respectively a RTP packet with a non-negotiated payload type. Receivers are expected to ignore and discard these types of RTP packets. This mechanism is applicable to non-AV data in PubSub Conferences.<a href="#section-6.3.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-7">In an AV conference, most participants will typically both send and receive data. However, in a PubSub Conference many of the PubSub Participants will only send data (Publihser) or receive data (Subscriber). However, eventhough a Subsriber does not publish any data, it might still use the mechanisms above if needed, and a PubSub Conference Server needs to be prepared to receive such RTP/RTCP packets from both Publishers and Subscribers.<a href="#section-6.3.2-7" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-8">NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is that Publishers and Subscribers do not need to be aware of each other. In such cases there is no need to use an end-to-end heartbeat mechanism between Publishers and Subscribers. Note that there might still be a heartbeat mechanism used between Publishers/Subsribers and the Broker. However, there might be cases where Publishers and Subscribers are tightly coupled, and where a heartbeat mechanism is required.<a href="#section-6.3.2-8" class="pilcrow">¶</a></p>
+<p id="section-6.3.2-9">NOTE: Some data formats might define their own methods for sending heartbeats. For example, there might a way to indicate that the payload is only used for heartbeat purpose, and does not contain any additional data.<a href="#section-6.3.2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="data-aggregation">
+<section id="section-6.3.3">
+          <h4 id="name-data-aggregation">
+<a href="#section-6.3.3" class="section-number selfRef">6.3.3. </a><a href="#name-data-aggregation" class="section-name selfRef">Data Aggregation</a>
+          </h4>
+<p id="section-6.3.3-1">NOTE: SenML supports aggregation. Mutli<a href="#section-6.3.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="sec-conf-considerations-4103">
-<section id="section-4.2">
+<section id="section-6.4">
         <h3 id="name-rfc-4103-consierations">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-rfc-4103-consierations" class="section-name selfRef">RFC 4103 Consierations</a>
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-rfc-4103-consierations" class="section-name selfRef">RFC 4103 Consierations</a>
         </h3>
-<p id="section-4.2-1">https://datatracker.ietf.org/doc/html/rfc4103<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2"><span>[<a href="#RFC4103" class="cite xref">RFC4103</a>]</span> defines an RTP payload format ('text/t140') to transport T.140 real-time text. Within this document, it is assumed that the t140 payload format is used in the RTP packets to transport the published data. The reason for this is the possibility to re-use existing conference servers that support the payload format to realize the Broker.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4-1">https://datatracker.ietf.org/doc/html/rfc4103<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.4-2"><span>[<a href="#RFC4103" class="cite xref">RFC4103</a>]</span> defines an RTP payload format ('text/t140') to transport T.140 real-time text. Within this document, it is assumed that the t140 payload format is used in the RTP packets to transport the published data. The reason for this is the possibility to re-use existing conference servers that support the payload format to realize the Broker.<a href="#section-6.4-2" class="pilcrow">¶</a></p>
 <div id="redundancy">
-<section id="section-4.2.1">
+<section id="section-6.4.1">
           <h4 id="name-redundancy">
-<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-redundancy" class="section-name selfRef">Redundancy</a>
+<a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-redundancy" class="section-name selfRef">Redundancy</a>
           </h4>
-<p id="section-4.2.1-1">https://datatracker.ietf.org/doc/html/rfc2198<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.1-2">By default, when no other redundancy mechanism is supported, the usage of the redundancy mechanism defined in <span>[<a href="#RFC2198" class="cite xref">RFC2198</a>]</span> is required, unless the network conditions can guarantee that all text will always be delivered from the sender to the receiver. Additional mechanisms, e.g., Forward Error Correction (FEC) <span>[<a href="#RFC2733" class="cite xref">RFC2733</a>]</span> might also be used.<a href="#section-4.2.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.2.1-3">In a Publish/Subscribe network, the data delivery requirements will determine whether redundancy or error correction mechanism are needed. In some cases, data loss might be toleraded, while in other cases there might be requirements that all published data reaches each Subscriber that has subscribed to the Topic of the data.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-1">https://datatracker.ietf.org/doc/html/rfc2198<a href="#section-6.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-2">By default, when no other redundancy mechanism is supported, the usage of the redundancy mechanism defined in <span>[<a href="#RFC2198" class="cite xref">RFC2198</a>]</span> is required, unless the network conditions can guarantee that all text will always be delivered from the sender to the receiver. Additional mechanisms, e.g., Forward Error Correction (FEC) <span>[<a href="#RFC2733" class="cite xref">RFC2733</a>]</span> might also be used.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.1-3">In a Publish/Subscribe network, the data delivery requirements will determine whether redundancy or error correction mechanism are needed. In some cases, data loss might be toleraded, while in other cases there might be requirements that all published data reaches each Subscriber that has subscribed to the Topic of the data.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="packet-loss-detection">
-<section id="section-4.2.2">
+<section id="section-6.4.2">
           <h4 id="name-packet-loss-detection">
-<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-packet-loss-detection" class="section-name selfRef">Packet Loss Detection</a>
+<a href="#section-6.4.2" class="section-number selfRef">6.4.2. </a><a href="#name-packet-loss-detection" class="section-name selfRef">Packet Loss Detection</a>
           </h4>
-<p id="section-4.2.2-1">As t140 packets are only sent when there is new text to send. Because of that, as the time between sent packets may vary, the Timestamp cannot be used by a receiver to detect packet loss. Instead, the Sequence Number (SN) is used to detect packet loss.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.2-2">Note that, if there is no new text to send, an RTP packet that only contains redundant data might be sent. This can be useful to e.g., maintain NAT bindings, and as a generic heartbeat mechanism to indicate that the sender is still alive.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="idle-period">
-<section id="section-4.2.3">
-          <h4 id="name-idle-period">
-<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-idle-period" class="section-name selfRef">Idle Period</a>
-          </h4>
-<p id="section-4.2.3-1"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> gives guidance on how to process real-time text in a conference server.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-6.4.2-1">As t140 packets are only sent when there is new text to send. Because of that, as the time between sent packets may vary, the Timestamp cannot be used by a receiver to detect packet loss. Instead, the Sequence Number (SN) is used to detect packet loss.<a href="#section-6.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.2-2">Note that, if there is no new text to send, an RTP packet that only contains redundant data might be sent. This can be useful to e.g., maintain NAT bindings, and as a generic heartbeat mechanism to indicate that the sender is still alive.<a href="#section-6.4.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-conf-considerations-9071">
-<section id="section-4.3">
-        <h3 id="name-rfc-9071-considerations">
-<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-rfc-9071-considerations" class="section-name selfRef">RFC 9071 Considerations</a>
-        </h3>
-<p id="section-4.3-1">https://www.rfc-editor.org/rfc/rfc9071.txt<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> provides guidance on mixing of real-time text (RTT) by a conference server.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
-<div id="simultanous-senders-1">
-<section id="section-4.3.1">
-          <h4 id="name-simultanous-senders-2">
-<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-simultanous-senders-2" class="section-name selfRef">Simultanous Senders</a>
+<section id="section-6.4.3">
+          <h4 id="name-rfc-9071-considerations">
+<a href="#section-6.4.3" class="section-number selfRef">6.4.3. </a><a href="#name-rfc-9071-considerations" class="section-name selfRef">RFC 9071 Considerations</a>
           </h4>
-<p id="section-4.3.1-1">As described in Section 3.1, in RTT conferences typically only one participant writes and sends text (at least long pieces of text) at any given time. Within a Publish/Subscribe network, multiple Publishers might publish data simultaneously, as data is often published as soon as it becomes available, depending on how time-critical the data is. In addition, Publishers typically have no idea when other Publishers are publishing data. Publishers might not even be aware of the other Publishers. Because of this, the Broker might receive published data from multiple Publishers simultaneously. If the Broker is not able to simultaneously forward all published data, it will have to buffer the data.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.3-1"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> provides guidance on mixing of real-time text (RTT) by a conference server. This sections discusses considerations to take into account when T.140 is used to transport Publish/Subscribe data. Note that some of the considerations have also been addressed from a generic conference perspective.<a href="#section-6.4.3-1" class="pilcrow">¶</a></p>
+<div id="simultanous-senders-1">
+<section id="section-6.4.3.1">
+            <h5 id="name-simultanous-senders-2">
+<a href="#section-6.4.3.1" class="section-number selfRef">6.4.3.1. </a><a href="#name-simultanous-senders-2" class="section-name selfRef">Simultanous Senders</a>
+            </h5>
+<p id="section-6.4.3.1-1">As described in Section 3.1 of <span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span>, in RTT conferences typically only one participant writes and sends text (at least long pieces of text) at any given time. Within a Publish/Subscribe network, multiple Publishers might publish data simultaneously, as data might be published as soon as it has been sampled, and as Publishers are now aware of when other Publsihers are publishing data. Because of this, the conference server might receive published data from multiple Publishers simultaneously. If the conference server is not able to simultaneously forward all published data, it will have to buffer the data.<a href="#section-6.4.3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="idle-period">
+<section id="section-6.4.4">
+          <h4 id="name-idle-period">
+<a href="#section-6.4.4" class="section-number selfRef">6.4.4. </a><a href="#name-idle-period" class="section-name selfRef">Idle Period</a>
+          </h4>
+<p id="section-6.4.4-1"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> gives guidance on how to process real-time text in a conference server.<a href="#section-6.4.4-1" class="pilcrow">¶</a></p>
+<div id="mode">
+<section id="section-6.4.4.1">
+            <h5 id="name-mode">
+<a href="#section-6.4.4.1" class="section-number selfRef">6.4.4.1. </a><a href="#name-mode" class="section-name selfRef">Mode</a>
+            </h5>
+<p id="section-6.4.4.1-1">Section 1.2 of <span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> describes different "modes".<a href="#section-6.4.4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sending-frequency">
-<section id="section-4.3.2">
-          <h4 id="name-sending-frequency">
-<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-sending-frequency" class="section-name selfRef">Sending Frequency</a>
-          </h4>
-<p id="section-4.3.2-1">Within a Publish/Subscribe network, the data publishing interval can vary widely, depending on the use-case. In some constrained environements, a Publisher may publish data e.g., once a day, while in an industrial environment a Publisher may publish data all the time, with a very short publishing interval.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
+<section id="section-6.4.4.2">
+            <h5 id="name-sending-frequency">
+<a href="#section-6.4.4.2" class="section-number selfRef">6.4.4.2. </a><a href="#name-sending-frequency" class="section-name selfRef">Sending Frequency</a>
+            </h5>
+<p id="section-6.4.4.2-1">Within a Publish/Subscribe network, the data publishing interval can vary widely, depending on the use-case. In some constrained environements, a Publisher may publish data e.g., once a day, while in an industrial environment a Publisher may publish data all the time, with a very short publishing interval.<a href="#section-6.4.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.4.4.2-2">Received Real-time text is often read by humans. Because of that, it is important that text that was sent simultaneously by different senders is also received at the simultanelusly by the receivers.<a href="#section-6.4.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.4.4.2-3">RTP-mixer-based method for multiparty-aware endpoints:<a href="#section-6.4.4.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.4.2-4"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> makes assumptions regarding how participant are sending text. It assumes that in a typcial scenario only one participant will send text at any given time. In a PubSub Conference, the same assumption cannot be done, as multiple publisher might simulateneously publish data to the same topic. In addition, unless a publisher also acts as a subscriber, it does not even know when and if other publishers are publishing data.<a href="#section-6.4.4.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.4.4.2-5"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> focuses on two mixing solutions: 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' (Section 2.2) and 'Mixing for Multiparty-Unaware Endpoints (Section 2.3)'.<a href="#section-6.4.4.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.4.4.2-6">In the 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' solution, the receivers will receive the text from all senders within a single RTP stream from the conference server.<a href="#section-6.4.4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sending-vs-receiving">
-<section id="section-4.3.3">
-          <h4 id="name-sending-vs-receiving">
-<a href="#section-4.3.3" class="section-number selfRef">4.3.3. </a><a href="#name-sending-vs-receiving" class="section-name selfRef">Sending vs Receiving</a>
-          </h4>
-<p id="section-4.3.3-1">In an AV Conference, human participants typically both send and receive media. This can also be the case in a PubSub Conference, if the Publish/Subscribe traffic pattern is used to realize two-way communication between conference participants. However, often PubSub Conference participants will either send (Publish) or receive (Subscribe) data. For example, sensors will typically only publish data.<a href="#section-4.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3.3-2">Received Real-time text is often read by humans. Because of that, it is important that text that was sent simultaneously by different senders is also received at the simultanelusly by the receivers.<a href="#section-4.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-4.3.3-3">RTP-mixer-based method for multiparty-aware endpoints:<a href="#section-4.3.3-3" class="pilcrow">¶</a></p>
-<p id="section-4.3.3-4"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> makes assumptions regarding how participant are sending text. It assumes that in a typcial scenario only one participant will send text at any given time. In a PubSub Conference, the same assumption cannot be done, as multiple publisher might simulateneously publish data to the same topic. In addition, unless a publisher also acts as a subscriber, it does not even know when and if other publishers are publishing data.<a href="#section-4.3.3-4" class="pilcrow">¶</a></p>
-<p id="section-4.3.3-5"><span>[<a href="#RFC9071" class="cite xref">RFC9071</a>]</span> focuses on two mixing solutions: 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' (Section 2.2) and 'Mixing for Multiparty-Unaware Endpoints (Section 2.3)'.<a href="#section-4.3.3-5" class="pilcrow">¶</a></p>
-<p id="section-4.3.3-6">In the 'The RTP-Mixer-Based Solution for Multiparty-Aware Endpoints' solution, the receivers will receive the text from all senders within a single RTP stream from the conference server.<a href="#section-4.3.3-6" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="rtp-non-conference-considerations">
-<section id="section-4.4">
-        <h3 id="name-rtp-non-conference-consider">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-rtp-non-conference-consider" class="section-name selfRef">RTP Non-Conference Considerations</a>
-        </h3>
-<p id="section-4.4-1">While the scope of this document is how a conference server can be used to realize a Publish/Subscribe Broker, this Section gives a short overview on how existing RTP extensions can be used for non-AV data.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<div id="rtp-retransmission-payload-format-ietf-rfc-4588">
-<section id="section-4.4.1">
-          <h4 id="name-rtp-retransmission-payload-">
-<a href="#section-4.4.1" class="section-number selfRef">4.4.1. </a><a href="#name-rtp-retransmission-payload-" class="section-name selfRef">RTP Retransmission Payload Format (IETF RFC 4588)</a>
-          </h4>
-<p id="section-4.4.1-1">https://datatracker.ietf.org/doc/html/rfc4588<a href="#section-4.4.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="rtp-payload-for-redundant-audio-data-ietf-rfc-2198">
-<section id="section-4.4.2">
-          <h4 id="name-rtp-payload-for-redundant-a">
-<a href="#section-4.4.2" class="section-number selfRef">4.4.2. </a><a href="#name-rtp-payload-for-redundant-a" class="section-name selfRef">RTP Payload for Redundant Audio Data (IETF RFC 2198)</a>
-          </h4>
-<p id="section-4.4.2-1">https://datatracker.ietf.org/doc/html/rfc2198<a href="#section-4.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.4.2-2">QUESTION: Can the mechanism be used for non-audio data?<a href="#section-4.4.2-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="an-rtp-payload-format-for-generic-forward-error-correction-ietf-rfc-2733">
-<section id="section-4.4.3">
-          <h4 id="name-an-rtp-payload-format-for-g">
-<a href="#section-4.4.3" class="section-number selfRef">4.4.3. </a><a href="#name-an-rtp-payload-format-for-g" class="section-name selfRef">An RTP Payload Format for Generic Forward Error Correction (IETF RFC 2733)</a>
-          </h4>
-<p id="section-4.4.3-1">https://datatracker.ietf.org/doc/html/rfc2733<a href="#section-4.4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.4.3-2">FEC is sent as a separate RTP stream.<a href="#section-4.4.3-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="rtp-payload-format-for-flexible-forward-error-correction-fec-ietf-rfc-8627">
-<section id="section-4.4.4">
-          <h4 id="name-rtp-payload-format-for-flex">
-<a href="#section-4.4.4" class="section-number selfRef">4.4.4. </a><a href="#name-rtp-payload-format-for-flex" class="section-name selfRef">RTP Payload Format for Flexible Forward Error Correction (FEC) (IETF RFC 8627)</a>
-          </h4>
-<p id="section-4.4.4-1">https://datatracker.ietf.org/doc/html/rfc8627<a href="#section-4.4.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="time-considerations">
-<section id="section-4.5">
+<section id="section-6.5">
         <h3 id="name-time-considerations">
-<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-time-considerations" class="section-name selfRef">Time Considerations</a>
+<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-time-considerations" class="section-name selfRef">Time Considerations</a>
         </h3>
-<p id="section-4.5-1">In a Publish/Subscribe network, as publishers publish data independently from each other, there is typically no need for subscribers to syncrhonize or "lip-synch" the data.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="keep-alive-and-heartbeat-considerations">
-<section id="section-4.6">
-        <h3 id="name-keep-alive-and-heartbeat-co">
-<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-keep-alive-and-heartbeat-co" class="section-name selfRef">Keep-alive and Heartbeat Considerations</a>
-        </h3>
-<p id="section-4.6-1">In a non-AV PubSub Conference, Publishers might stay within a PubSub conference for a long periods without publishing any data. Subscribers will not publish any data at all. There are a couple of possible implications that must be considered: NAT binding keep-alives and heartbeats (i.e., inform other PubSub Participants that a PubSub Participant is still 'alive'). NAT binding keep-alives are needed in cases where a PubSub Participants needs to send periodic data in order to maintain NAT bindings between itself and the PubSub Conference servers. This is important for Subscribers, but also for Publishers that publish data with very long intervals.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
-<p id="section-4.6-2"><span>[<a href="#RFC6263" class="cite xref">RFC6263</a>]</span> describes different RTP/RTCP mechanisms to send NAT keep-alives.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
-<p id="section-4.6-3">The 'Empty (0-Byte) Transport Packet' mechanism does not use RTP/RTCP. Instead, a participant will send an empty transport packet (e.g., UDP packet).  Note that this mechanism is useful mainly for NAT traversal purpose. The conference server application will typcially not be informed about these packets, and will not forward the packets to other conference particiapants. This mechanism is applicable to non-AV data in PubSub Conferences.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
-<p id="section-4.6-4">The 'RTP Packet with Comfort Noise Payload' mechanism uses a specific RTP payload format for comfort noise <span>[<a href="#RFC3389" class="cite xref">RFC3389</a>]</span>. The payload format has been defined for audio data, and must be supported by both senders and receivers. Is not applicable for non-AV data in PubSub conferences.<a href="#section-4.6-4" class="pilcrow">¶</a></p>
-<p id="section-4.6-5">The 'RTCP Packets Multiplexed with RTP Packets' mechanism uses RTP/RTCP multiplexing, where the same 5-typle is used for the RTP and RTCP packets. When there is no data to be sent, an RTCP packet can be sent as a keep-alive. Note that Subscribers that do not send RTP packets can still send RTCP packets.<a href="#section-4.6-5" class="pilcrow">¶</a></p>
-<p id="section-4.6-6">The 'RTP Packet with Incorrect Version Number' and 'RTP Packet with Unknown Payload Type' mechanisms uses invalid with an unvalid RTP version number respectively a RTP packet with a non-negotiated payload type. Receivers are expected to ignore and discard these types of RTP packets. This mechanism is applicable to non-AV data in PubSub Conferences.<a href="#section-4.6-6" class="pilcrow">¶</a></p>
-<p id="section-4.6-7">In an AV conference, most participants will typically both send and receive data. However, in a PubSub Conference many of the PubSub Participants will only send data (Publihser) or receive data (Subscriber). However, eventhough a Subsriber does not publish any data, it might still use the mechanisms above if needed, and a PubSub Conference Server needs to be prepared to receive such RTP/RTCP packets from both Publishers and Subscribers.<a href="#section-4.6-7" class="pilcrow">¶</a></p>
-<p id="section-4.6-8">NOTE: One of the ideas behind the Publish/Subsribe traffic pattern is that Publishers and Subscribers do not need to be aware of each other. In such cases there is no need to use an end-to-end heartbeat mechanism between Publishers and Subscribers. Note that there might still be a heartbeat mechanism used between Publishers/Subsribers and the Broker. However, there might be cases where Publishers and Subscribers are tightly coupled, and where a heartbeat mechanism is required.<a href="#section-4.6-8" class="pilcrow">¶</a></p>
-<p id="section-4.6-9">NOTE: Some data formats might define their own methods for sending heartbeats. For example, there might a way to indicate that the payload is only used for heartbeat purpose, and does not contain any additional data.<a href="#section-4.6-9" class="pilcrow">¶</a></p>
+<p id="section-6.5-1">In a Publish/Subscribe network, as publishers publish data independently from each other, there is typically no need for subscribers to syncrhonize or "lip-synch" the data.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="rtcp-considerations">
-<section id="section-4.7">
+<section id="section-6.6">
         <h3 id="name-rtcp-considerations">
-<a href="#section-4.7" class="section-number selfRef">4.7. </a><a href="#name-rtcp-considerations" class="section-name selfRef">RTCP Considerations</a>
+<a href="#section-6.6" class="section-number selfRef">6.6. </a><a href="#name-rtcp-considerations" class="section-name selfRef">RTCP Considerations</a>
         </h3>
-<div id="nack-considerations">
-<section id="section-4.7.1">
-          <h4 id="name-nack-considerations">
-<a href="#section-4.7.1" class="section-number selfRef">4.7.1. </a><a href="#name-nack-considerations" class="section-name selfRef">NACK Considerations</a>
-        </h4>
-</section>
-</div>
+<p id="section-6.6-1">The Real-time Control Protocol (RTCP) is used in conjunction with RTP. While RTP carries the actual data, RTCP carries information (e.g., statistics, control information), within an RTP session.<a href="#section-6.6-1" class="pilcrow">¶</a></p>
+<p id="section-6.6-2">NOTE: As RTCP messages sent by a Publisher might be terminated by a conference server (performing data mixing), essential information might not reach the Subscribers. For example, an RTPC Sender Report (SR) that provides mapping between the absolute time and the RTP Timestamp might not reach the Subscribers.<a href="#section-6.6-2" class="pilcrow">¶</a></p>
+<p id="section-6.6-3">Note that if is a large number of participants within a PubSub Conference, and if there is a need to send RTCP messages frequently, the RTCP messages might consume a large portion of network- and conference server capacity.<a href="#section-6.6-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="rtp-mixing-or-translating">
-<section id="section-4.8">
+<section id="section-6.7">
         <h3 id="name-rtp-mixing-or-translating">
-<a href="#section-4.8" class="section-number selfRef">4.8. </a><a href="#name-rtp-mixing-or-translating" class="section-name selfRef">RTP Mixing or Translating</a>
+<a href="#section-6.7" class="section-number selfRef">6.7. </a><a href="#name-rtp-mixing-or-translating" class="section-name selfRef">RTP Mixing or Translating</a>
         </h3>
-<p id="section-4.8-1">In an AV conference, the actual time when the AV data was created is typcially not that important to the receiver. It is more important that the conference server is able to mix and lip-synch AV data that has been created at the same time by the senders.<a href="#section-4.8-1" class="pilcrow">¶</a></p>
+<p id="section-6.7-1">In an AV conference, the actual time when the AV data was created is typcially not that important to the receiver. It is more important that the conference server is able to mix and lip-synch AV data that has been created at the same time by the senders.<a href="#section-6.7-1" class="pilcrow">¶</a></p>
 <div id="translating">
-<section id="section-4.8.1">
+<section id="section-6.7.1">
           <h4 id="name-translating">
-<a href="#section-4.8.1" class="section-number selfRef">4.8.1. </a><a href="#name-translating" class="section-name selfRef">Translating</a>
+<a href="#section-6.7.1" class="section-number selfRef">6.7.1. </a><a href="#name-translating" class="section-name selfRef">Translating</a>
           </h4>
-<p id="section-4.8.1-1">By default, when a Broker receives published data to a Topic, it forwards the data to each Subscriber that has subscribed to the data, without any processing of the data.<a href="#section-4.8.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.8.1-2">Aggregation: instead of forwarding each published data directly to a Subscriber, the PubSub Conference server might choose to store the published data in an aggregated manner, and forward all stored data in a single RTP packet towards the Subscriber based on different policies, e.g., depen<a href="#section-4.8.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.8.1-3">NOTE: The mechansims used by a PubSub Conference server to determine the constraints (network bandwidth etc) of a Subscriber are outside the scope of this document.<a href="#section-4.8.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.8.1-4">In case of translation, the original SSRC and the Timestamp will not be replaced by the translator.<a href="#section-4.8.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.7.1-1">By default, when a Broker receives published data to a Topic, it forwards the data to each Subscriber that has subscribed to the data, without any processing of the data.<a href="#section-6.7.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.7.1-2">Aggregation: instead of forwarding each published data directly to a Subscriber, the PubSub Conference server might choose to store the published data in an aggregated manner, and forward all stored data in a single RTP packet towards the Subscriber based on different policies, e.g., depen<a href="#section-6.7.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.7.1-3">NOTE: The mechansims used by a PubSub Conference server to determine the constraints (network bandwidth etc) of a Subscriber are outside the scope of this document.<a href="#section-6.7.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.7.1-4">In case of translation, the original SSRC and the Timestamp will not be replaced by the translator.<a href="#section-6.7.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="mixing">
-<section id="section-4.8.2">
+<section id="section-6.7.2">
           <h4 id="name-mixing">
-<a href="#section-4.8.2" class="section-number selfRef">4.8.2. </a><a href="#name-mixing" class="section-name selfRef">Mixing</a>
+<a href="#section-6.7.2" class="section-number selfRef">6.7.2. </a><a href="#name-mixing" class="section-name selfRef">Mixing</a>
           </h4>
-<p id="section-4.8.2-1">In an RTP packet, the Timestamp value typcially indicates when the payload data has been sampled. The exact details depends on the media type and payload format.<a href="#section-4.8.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.8.2-2">In case of mixing, the conference server will insert its own SSRC and Timestamp in the outgoing RTP packets with the mixed media. While the CSRC field can provide the SSRCs of the RTP packets used to create the mix, the Timestamp values will be lost. In a Publish/Subscribe scenarios, if the Subscribers need to know when data has been published, they cannot rely on getting that information from RTP.<a href="#section-4.8.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.8.2-3">POTENTIAL STANDARDIZATION WORK: In addition to contributing SSRCs, also include contributing Timestamps.<a href="#section-4.8.2-3" class="pilcrow">¶</a></p>
-<p id="section-4.8.2-4">POTENTIAL STANDARDIZATION WORK: Add data sampling timestamp to RTP<a href="#section-4.8.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.7.2-1">As a mixer is consdiered a source by itself, it will often terminate received RTCP packets. Because of this, subscribers might not receive the RTCP SR packets that contain the mapping between the RTP Timestamp time and the real clock.<a href="#section-6.7.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.7.2-2">In an RTP packet, the Timestamp value typcially indicates when the payload data has been sampled. The exact details depends on the media type and payload format.<a href="#section-6.7.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.7.2-3">In case of mixing, the conference server will insert its own SSRC and Timestamp in the outgoing RTP packets with the mixed media. While the CSRC field can provide the SSRCs of the RTP packets used to create the mix, the Timestamp values will be lost. In a Publish/Subscribe scenarios, if the Subscribers need to know when data has been published, they cannot rely on getting that information from RTP.<a href="#section-6.7.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.7.2-4">POTENTIAL STANDARDIZATION WORK: In addition to contributing SSRCs, also include contributing Timestamps.<a href="#section-6.7.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.7.2-5">POTENTIAL STANDARDIZATION WORK: Add data sampling timestamp to RTP<a href="#section-6.7.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="single-vs-multiple-rtp-sessions">
-<section id="section-4.9">
+<section id="section-6.8">
         <h3 id="name-single-vs-multiple-rtp-sess">
-<a href="#section-4.9" class="section-number selfRef">4.9. </a><a href="#name-single-vs-multiple-rtp-sess" class="section-name selfRef">Single vs multiple RTP sessions</a>
+<a href="#section-6.8" class="section-number selfRef">6.8. </a><a href="#name-single-vs-multiple-rtp-sess" class="section-name selfRef">Single vs multiple RTP sessions</a>
         </h3>
-<p id="section-4.9-1">An RTP Stream is identified by the data source (SSRC).<a href="#section-4.9-1" class="pilcrow">¶</a></p>
-<p id="section-4.9-2">Within a PubSub Conference, the number of publishers might be very large. In addition, the number of publsihers might vary quite frequently, as publishers join and leave the PubSub Conference. For that reason, it is not convenient for a subscriber to negotiate a separate RTP session for each publisher with the conference server. In addtion, one of the ideas behind the Publish/Subscribe pattern is that a Subscriber does not need to know, or be impacted, based on the number of Publsihers.<a href="#section-4.9-2" class="pilcrow">¶</a></p>
-<p id="section-4.9-3">In the case of real-time text, receivers need to be able to identify the sender of each RTP packet, so that the text from all senders is not mixed togheter.<a href="#section-4.9-3" class="pilcrow">¶</a></p>
-<p id="section-4.9-4">In some PubSub Conferences, Subscribers might not need to know which Publisher has published a specific set of data.<a href="#section-4.9-4" class="pilcrow">¶</a></p>
-<p id="section-4.9-5">However, the SSRC<a href="#section-4.9-5" class="pilcrow">¶</a></p>
+<p id="section-6.8-1">An RTP Stream is identified by the data source (SSRC).<a href="#section-6.8-1" class="pilcrow">¶</a></p>
+<p id="section-6.8-2">Within a PubSub Conference, the number of publishers might be very large. In addition, the number of publsihers might vary quite frequently, as publishers join and leave the PubSub Conference. For that reason, it is not convenient for a subscriber to negotiate a separate RTP session for each publisher with the conference server. In addtion, one of the ideas behind the Publish/Subscribe pattern is that a Subscriber does not need to know, or be impacted, based on the number of Publsihers.<a href="#section-6.8-2" class="pilcrow">¶</a></p>
+<p id="section-6.8-3">In the case of real-time text, receivers need to be able to identify the sender of each RTP packet, so that the text from all senders is not mixed togheter.<a href="#section-6.8-3" class="pilcrow">¶</a></p>
+<p id="section-6.8-4">In some PubSub Conferences, Subscribers might not need to know which Publisher has published a specific set of data.<a href="#section-6.8-4" class="pilcrow">¶</a></p>
+<p id="section-6.8-5">However, the SSRC<a href="#section-6.8-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sender-timestamp">
-<section id="section-4.10">
+<section id="section-6.9">
         <h3 id="name-sender-timestamp">
-<a href="#section-4.10" class="section-number selfRef">4.10. </a><a href="#name-sender-timestamp" class="section-name selfRef">Sender Timestamp</a>
+<a href="#section-6.9" class="section-number selfRef">6.9. </a><a href="#name-sender-timestamp" class="section-name selfRef">Sender Timestamp</a>
         </h3>
-<p id="section-4.10-1">RTP does not provide a mechanism to indicate the time when a packet is sent, or when the RTP payload was sampled.<a href="#section-4.10-1" class="pilcrow">¶</a></p>
-<p id="section-4.10-2">The following experimental RTP header extension to include the absolute packet send time in an RTP packet:<a href="#section-4.10-2" class="pilcrow">¶</a></p>
-<p id="section-4.10-3">https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-send-time<a href="#section-4.10-3" class="pilcrow">¶</a></p>
-<p id="section-4.10-4">https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-capture-time/<a href="#section-4.10-4" class="pilcrow">¶</a></p>
-<p id="section-4.10-5">NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers<a href="#section-4.10-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="sec-sip-considerations">
-<section id="section-5">
-      <h2 id="name-sip-considerations">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-sip-considerations" class="section-name selfRef">SIP Considerations</a>
-    </h2>
-</section>
-</div>
-<div id="sec-sip-considerations-subject">
-<section id="section-6">
-      <h2 id="name-sip-subject-header-field">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-sip-subject-header-field" class="section-name selfRef">SIP Subject Header Field</a>
-      </h2>
-<p id="section-6-1">The SIP Subject header field can be used to indicate the PubSub Topic associated with the PubSub Conference.<a href="#section-6-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="sec-sdp-considerations">
-<section id="section-7">
-      <h2 id="name-sdp-considerations">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-sdp-considerations" class="section-name selfRef">SDP Considerations</a>
-      </h2>
-<div id="sec-sdp-considerations-dir-attr">
-<section id="section-7.1">
-        <h3 id="name-sdp-direaction-attribute">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-sdp-direaction-attribute" class="section-name selfRef">SDP Direaction Attribute</a>
-        </h3>
-<p id="section-7.1-1">These attributes can be used to indicate the PubSub role of a participant.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">A participant can use SDP 'sendonly' attribute to indicate that it is acting as a Publisher.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
-<p id="section-7.1-3">A participant can use SDP 'recvonly' attribute to indicate that it is acting as a Subscriber.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
-<p id="section-7.1-4">A participant can use SDP 'sendrecv' attribute to indicate that it is acting as both a Publisher and a Subscriber.<a href="#section-7.1-4" class="pilcrow">¶</a></p>
-<p id="section-7.1-5">A participant can use SDP 'inactive' attribute to indicate that it is not acting as a Publisher nor a Subscriber. A participant can use the attribute e.g., to temporary indicate to the conference server that it does not want to receive data associated with the conference, but also to indicate that it will not send data associated with the conference.<a href="#section-7.1-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="sip-conference-considerations">
-<section id="section-8">
-      <h2 id="name-sip-conference-consideratio">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-sip-conference-consideratio" class="section-name selfRef">SIP Conference Considerations</a>
-      </h2>
-<div id="conference-lifecycle">
-<section id="section-8.1">
-        <h3 id="name-conference-lifecycle">
-<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-conference-lifecycle" class="section-name selfRef">Conference lifecycle</a>
-        </h3>
-<div id="conference-creation">
-<section id="section-8.1.1">
-          <h4 id="name-conference-creation">
-<a href="#section-8.1.1" class="section-number selfRef">8.1.1. </a><a href="#name-conference-creation" class="section-name selfRef">Conference creation</a>
-          </h4>
-<p id="section-8.1.1-1">An AV conference is typically created either by one of the participants, or by a contralized function tool.<a href="#section-8.1.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="conference-duration-and-termination">
-<section id="section-8.1.2">
-          <h4 id="name-conference-duration-and-ter">
-<a href="#section-8.1.2" class="section-number selfRef">8.1.2. </a><a href="#name-conference-duration-and-ter" class="section-name selfRef">Conference duration and termination</a>
-          </h4>
-<p id="section-8.1.2-1">The duration of an AV conference may vary, but is typcially measured in minutes or hours. An AV conference is typically terminated when the last participant has left the conference.<a href="#section-8.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.1.2-2">The interest for a PubSub topic might last for a very long time. Because of that, a PubSub conference associated with the topc might last for days, months or "infinite". While there might be times when there are no PubSub participants within a conference, the conference server might still keep the PubSub conference "alive", as new participants are expected to join in the near future. One advantage of keeping the conference "alive" is that participants can use the same conference URI whenever they are re-joining the conference.<a href="#section-8.1.2-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="join-existing-conference">
-<section id="section-8.2">
-        <h3 id="name-join-existing-conference">
-<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-join-existing-conference" class="section-name selfRef">Join existing conference</a>
-        </h3>
-<p id="section-8.2-1">A conference server might host multiple conferences that share the same conference name (Subject). Since the name is just a human readable string value, it is not uncommon that multiple AV conferences share the same name. Each conference will obviously have a unique conference URI.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.2-2">It is not practical to host multiple PubSub conferences that share the same Topic. Because of that, if a PubSub participant tries to create a PubSub conference with a Topic for which there already exist a conference, the conference server might choose to either reject the conference creation request (and inform the endpoint about the existing conference), redirect the participant to the existing conference (using a SIP 3xx response code <span>[<a href="#RFC3261" class="cite xref">RFC3261</a>]</span>) or simply add the endpoint to the existing conference.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.9-1">RTP does not provide a mechanism to indicate the time when a packet is sent, or when the RTP payload was sampled.<a href="#section-6.9-1" class="pilcrow">¶</a></p>
+<p id="section-6.9-2">The following experimental RTP header extension to include the absolute packet send time in an RTP packet:<a href="#section-6.9-2" class="pilcrow">¶</a></p>
+<p id="section-6.9-3">https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-send-time<a href="#section-6.9-3" class="pilcrow">¶</a></p>
+<p id="section-6.9-4">https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/rtp-hdrext/abs-capture-time/<a href="#section-6.9-4" class="pilcrow">¶</a></p>
+<p id="section-6.9-5">NOTE: In addition to the RTP SSRC value, the data format used in the RTP packet payload might have a source indicator that tells Subscrbiers<a href="#section-6.9-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="data-mixing">
-<section id="section-8.3">
+<section id="section-6.10">
         <h3 id="name-data-mixing">
-<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-data-mixing" class="section-name selfRef">Data Mixing</a>
+<a href="#section-6.10" class="section-number selfRef">6.10. </a><a href="#name-data-mixing" class="section-name selfRef">Data Mixing</a>
         </h3>
-<p id="section-8.3-1">The way a conference server depends on the media type. In an AV conference, the audio ... For example, all incoming audio data is typically mixed together, so that everyone can hear everyone else. In case of video, if the con the conference server typcially forwards video stream of the participants currently spekakinh.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3-2">In the case of non-AV data, the default behavior within a PubSub Conference is to forward the data from a PubSub Publisher to each PubSub Subscriber, without performing any mixing or selection of what data is forwarded.<a href="#section-8.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.10-1">The way a conference server depends on the media type. In an AV conference, the audio ... For example, all incoming audio data is typically mixed together, so that everyone can hear everyone else. In case of video, if the con the conference server typcially forwards video stream of the participants currently spekakinh.<a href="#section-6.10-1" class="pilcrow">¶</a></p>
+<p id="section-6.10-2">In the case of non-AV data, the default behavior within a PubSub Conference is to forward the data from a PubSub Publisher to each PubSub Subscriber, without performing any mixing or selection of what data is forwarded.<a href="#section-6.10-2" class="pilcrow">¶</a></p>
 <span id="name-pubsub-conference-data-forw"></span><div id="fig-broker-forward">
-<figure id="figure-3">
-          <div id="section-8.3-3.1">
-            <div class="alignCenter art-svg artwork" id="section-8.3-3.1.1">
+<figure id="figure-5">
+          <div id="section-6.10-3.1">
+            <div class="alignCenter art-svg artwork" id="section-6.10-3.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="240" width="504" viewBox="0 0 504 240" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,96" fill="none" stroke="black"></path>
                 <path d="M 104,32 L 104,96" fill="none" stroke="black"></path>
@@ -2040,19 +1960,19 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
                   <text x="360" y="180">X</text>
                   <text x="444" y="180">Subscriber</text>
                 </g>
-              </svg><a href="#section-8.3-3.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-6.10-3.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
 <a href="#name-pubsub-conference-data-forw" class="selfRef">PubSub Conference Data Forwarding</a>
           </figcaption></figure>
 </div>
-<p id="section-8.3-4">As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers.<a href="#section-8.3-4" class="pilcrow">¶</a></p>
-<p id="section-8.3-5">For example, if the Broker receives data in a SenML Record from Publisher A and Publisher B at the same time it might choose to place and forward the SenML Records in a SenML Pack.<a href="#section-8.3-5" class="pilcrow">¶</a></p>
+<p id="section-6.10-4">As an optimization, if the Broker receives data from multiple Publishers, it may forward data from multiple Publishers in a single RTP payload towards the Subscribers.<a href="#section-6.10-4" class="pilcrow">¶</a></p>
+<p id="section-6.10-5">For example, if the Broker receives data in a SenML Record from Publisher A and Publisher B at the same time it might choose to place and forward the SenML Records in a SenML Pack.<a href="#section-6.10-5" class="pilcrow">¶</a></p>
 <span id="name-senml-pack-created-by-broke"></span><div id="fig-senml-pack">
-<figure id="figure-4">
-          <div id="section-8.3-6.1">
-            <div class="alignCenter art-svg artwork" id="section-8.3-6.1.1">
+<figure id="figure-6">
+          <div id="section-6.10-6.1">
+            <div class="alignCenter art-svg artwork" id="section-6.10-6.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="352" width="488" viewBox="0 0 488 352" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <g class="text">
                   <text x="24" y="36">SenML</text>
@@ -2085,10 +2005,10 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
                   <text x="260" y="308">{"n":"urn:dev:ow:F0ea673a01000036","u":"Cel","v":25.7}</text>
                   <text x="32" y="324">]</text>
                 </g>
-              </svg><a href="#section-8.3-6.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-6.10-6.1.1" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-senml-pack-created-by-broke" class="selfRef">SenML Pack created by broker</a>
           </figcaption></figure>
 </div>
@@ -2096,239 +2016,67 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
 </div>
 </section>
 </div>
-<div id="sip-event-package-considerations">
-<section id="section-9">
-      <h2 id="name-sip-event-package-considera">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-sip-event-package-considera" class="section-name selfRef">SIP Event Package Considerations</a>
-      </h2>
-<div id="sip-event-package-for-conference-state">
-<section id="section-9.1">
-        <h3 id="name-sip-event-package-for-confe">
-<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-sip-event-package-for-confe" class="section-name selfRef">SIP Event Package for Conference State</a>
-        </h3>
-<p id="section-9.1-1"><span>[<a href="#RFC4575" class="cite xref">RFC4575</a>]</span> defines a SIP Event Package <span>[<a href="#RFC3265" class="cite xref">RFC3265</a>]</span> for Conference State. A conference participant can subscribe to the event package, and retrieve conferance state information, including information about the conference itsel, and information about other conference participants. For a PubSub conference, the "subject" child element of the "conference-description" element can be used to indicate the Topic associated with the conference.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-<div id="extensions-for-pubsub">
-<section id="section-9.1.1">
-          <h4 id="name-extensions-for-pubsub">
-<a href="#section-9.1.1" class="section-number selfRef">9.1.1. </a><a href="#name-extensions-for-pubsub" class="section-name selfRef">Extensions for PubSub</a>
-          </h4>
-<div id="maximum-number-of-conference-participants">
-<section id="section-9.1.1.1">
-            <h5 id="name-maximum-number-of-conferenc">
-<a href="#section-9.1.1.1" class="section-number selfRef">9.1.1.1. </a><a href="#name-maximum-number-of-conferenc" class="section-name selfRef">Maximum Number of Conference Participants</a>
-            </h5>
-<p id="section-9.1.1.1-1">The "maximum-user-count" element is used to indicate the maximum number of conference participants. For an AudioVisual conference, where participants typcially both send and receive media a single element will be enough. However, in a PubSub conference, a majority of the conference participants might be either subscribers or publishers. There might be a large variation in how many publishers and how mnay subscribers a conference server is able to handle. Therefore it could be useful to have separate elements to indicate that, e.g., "maximum-user-count-publisher" and "maximum-user-count-subscriber".<a href="#section-9.1.1.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-</section>
-</div>
-<div id="sip-event-package-for-publishsubscribe">
-<section id="section-9.2">
-        <h3 id="name-sip-event-package-for-publi">
-<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-sip-event-package-for-publi" class="section-name selfRef">SIP Event Package for PublishSubscribe</a>
-        </h3>
-<p id="section-9.2-1">While the SIP Event Package for Conference State provides information and state information for a given conference, it does not provide information about other conferences that are hosted by the conference server.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2-2">This section suggests a new SIP Event Package, SIP Event Package for PublishSubscribe. The event package is not assoiciated with a specific PubSub conference, but provides information about the PubSub conferences hosted by the conference server. For each PubSub conference hosted by conference server, the event package contains the conference URI and the associatd topic. It might also contain additional information about each PubSub conference. In addition, if the topic is associated with some namespace or dictionary, there might be information about that.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
-<span id="name-sip-event-package-for-publis"></span><div id="fig-sip-eventpackage-pubsub">
-<figure id="figure-5">
-          <div id="section-9.2-3.1">
-            <div class="alignCenter art-svg artwork" id="section-9.2-3.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="272" viewBox="0 0 272 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                <path d="M 48,48 L 48,64" fill="none" stroke="black"></path>
-                <path d="M 88,80 L 88,136" fill="none" stroke="black"></path>
-                <path d="M 128,96 L 128,112" fill="none" stroke="black"></path>
-                <path d="M 128,144 L 128,160" fill="none" stroke="black"></path>
-                <g class="text">
-                  <text x="96" y="36">pubsub-conferences-info</text>
-                  <text x="60" y="68">--</text>
-                  <text x="148" y="68">pubsub-conferences</text>
-                  <text x="100" y="84">--</text>
-                  <text x="184" y="84">pubsub-conference</text>
-                  <text x="140" y="100">--</text>
-                  <text x="212" y="100">conference-URI</text>
-                  <text x="140" y="116">--</text>
-                  <text x="176" y="116">topic</text>
-                  <text x="100" y="132">--</text>
-                  <text x="184" y="132">pubsub-conference</text>
-                  <text x="88" y="148">.</text>
-                  <text x="140" y="148">--</text>
-                  <text x="212" y="148">conference-URI</text>
-                  <text x="88" y="164">.</text>
-                  <text x="140" y="164">--</text>
-                  <text x="176" y="164">topic</text>
-                  <text x="88" y="180">.</text>
-                </g>
-              </svg><a href="#section-9.2-3.1.1" class="pilcrow">¶</a>
-</div>
-</div>
-<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
-<a href="#name-sip-event-package-for-publis" class="selfRef">SIP Event Package for PublishSubscribe</a>
-          </figcaption></figure>
-</div>
-</section>
-</div>
-<div id="xml-schema">
-<section id="section-9.3">
-        <h3 id="name-xml-schema">
-<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-xml-schema" class="section-name selfRef">XML Schema</a>
-        </h3>
-<p id="section-9.3-1">TBD<a href="#section-9.3-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="example">
-<section id="section-9.4">
-        <h3 id="name-example">
-<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-example" class="section-name selfRef">Example</a>
-        </h3>
-<span id="name-example-sip-event-package-f"></span><div id="fig-sip-pubsup-event">
-<figure id="figure-6">
-          <div id="section-9.4-1.1">
-            <div class="alignCenter art-svg artwork" id="section-9.4-1.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="384" width="1088" viewBox="0 0 1088 384" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                <path d="M 32,144 L 48,144" fill="none" stroke="black"></path>
-                <path d="M 40,288 L 56,256" fill="none" stroke="black"></path>
-                <polygon class="arrowhead" points="56,144 44,138.4 44,149.6" fill="black" transform="rotate(0,48,144)"></polygon>
-                <g class="text">
-                  <text x="48" y="36">&lt;?xml</text>
-                  <text x="128" y="36">version="1.0"</text>
-                  <text x="260" y="36">encoding="UTF-8"?&gt;</text>
-                  <text x="124" y="52">&lt;pubsub-conferences-info</text>
-                  <text x="252" y="68">xmlns="urn:ietf:params:xml:ns:pubsub-conferences-info"</text>
-                  <text x="180" y="84">entity="sips:confserver@example.com"</text>
-                  <text x="84" y="100">state="full"</text>
-                  <text x="188" y="100">version="1"&gt;</text>
-                  <text x="44" y="116">&lt;!--</text>
-                  <text x="68" y="132">PUBSUB</text>
-                  <text x="144" y="132">CONFERENCES</text>
-                  <text x="116" y="164">&lt;pubsub-conferences&gt;</text>
-                  <text x="116" y="180">&lt;pubsub-conference</text>
-                  <text x="348" y="180">entity="sip:pubsubconf123@example.com"</text>
-                  <text x="560" y="180">state="full"&gt;</text>
-                  <text x="100" y="196">&lt;topic&gt;water</text>
-                  <text x="232" y="196">temperature&lt;/topic&gt;</text>
-                  <text x="124" y="212">&lt;/pubsub-conference&gt;</text>
-                  <text x="116" y="228">&lt;pubsub-conference</text>
-                  <text x="348" y="228">entity="sip:pubsubconf456@example.com"</text>
-                  <text x="560" y="228">state="full"&gt;</text>
-                  <text x="92" y="244">&lt;topic&gt;air</text>
-                  <text x="216" y="244">temperature&lt;/topic&gt;</text>
-                  <text x="48" y="260">&lt;</text>
-                  <text x="132" y="260">pubsub-conference&gt;</text>
-                  <text x="40" y="276">&lt;</text>
-                  <text x="128" y="276">pubsub-conferences&gt;</text>
-                  <text x="32" y="292">&lt;</text>
-                  <text x="140" y="292">pubsub-conferences-info&gt;</text>
-                  <text x="24" y="324">NOTE:</text>
-                  <text x="64" y="324">The</text>
-                  <text x="140" y="324">conference-uri</text>
-                  <text x="212" y="324">is</text>
-                  <text x="256" y="324">defined</text>
-                  <text x="300" y="324">as</text>
-                  <text x="324" y="324">an</text>
-                  <text x="408" y="324">pubsub-conference</text>
-                  <text x="512" y="324">element</text>
-                  <text x="588" y="324">attribute.</text>
-                  <text x="644" y="324">As</text>
-                  <text x="668" y="324">an</text>
-                  <text x="712" y="324">option,</text>
-                  <text x="756" y="324">it</text>
-                  <text x="792" y="324">could</text>
-                  <text x="828" y="324">be</text>
-                  <text x="872" y="324">defined</text>
-                  <text x="916" y="324">as</text>
-                  <text x="936" y="324">a</text>
-                  <text x="980" y="324">separate</text>
-                  <text x="1052" y="324">element.</text>
-                  <text x="24" y="356">NOTE:</text>
-                  <text x="60" y="356">As</text>
-                  <text x="84" y="356">an</text>
-                  <text x="128" y="356">option,</text>
-                  <text x="176" y="356">the</text>
-                  <text x="216" y="356">topic</text>
-                  <text x="264" y="356">could</text>
-                  <text x="308" y="356">also</text>
-                  <text x="340" y="356">be</text>
-                  <text x="384" y="356">defined</text>
-                  <text x="428" y="356">as</text>
-                  <text x="452" y="356">an</text>
-                  <text x="536" y="356">pubsub-conference</text>
-                  <text x="640" y="356">element</text>
-                  <text x="716" y="356">attribute.</text>
-                </g>
-              </svg><a href="#section-9.4-1.1.1" class="pilcrow">¶</a>
-</div>
-</div>
-<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
-<a href="#name-example-sip-event-package-f" class="selfRef">Example: SIP Event Package for PublishSubscribe</a>
-          </figcaption></figure>
-</div>
-</section>
-</div>
-</section>
-</div>
 <div id="rtp-considerations">
-<section id="section-10">
-      <h2 id="name-rtp-considerations">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-rtp-considerations" class="section-name selfRef">RTP Considerations</a>
+<section id="section-7">
+      <h2 id="name-rtp-considerations-2">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-rtp-considerations-2" class="section-name selfRef">RTP Considerations</a>
       </h2>
 <div id="rtp-payload-type-pt-for-pubsub">
-<section id="section-10.1">
+<section id="section-7.1">
         <h3 id="name-rtp-payload-type-pt-for-pub">
-<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-rtp-payload-type-pt-for-pub" class="section-name selfRef">RTP Payload Type (PT) for PubSub</a>
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-rtp-payload-type-pt-for-pub" class="section-name selfRef">RTP Payload Type (PT) for PubSub</a>
       </h3>
 </section>
 </div>
 <div id="rtp-header-marker-bit">
-<section id="section-10.2">
+<section id="section-7.2">
         <h3 id="name-rtp-header-marker-bit">
-<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-rtp-header-marker-bit" class="section-name selfRef">RTP Header Marker Bit</a>
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-rtp-header-marker-bit" class="section-name selfRef">RTP Header Marker Bit</a>
         </h3>
-<p id="section-10.2-1">This document does not define usage of the RTP header Marker bit.<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-1">This document does not define usage of the RTP header Marker bit.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="rtp-extensions-for-pubsub">
-<section id="section-10.3">
+<section id="section-7.3">
         <h3 id="name-rtp-extensions-for-pubsub">
-<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-rtp-extensions-for-pubsub" class="section-name selfRef">RTP Extensions for PubSub</a>
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-rtp-extensions-for-pubsub" class="section-name selfRef">RTP Extensions for PubSub</a>
         </h3>
-<p id="section-10.3-1">A large number of RTP extensions have been specified for RTP. Many of the extensions have been specified with an AudioVisual use-case in mind. However, many of them can also be applied when RTP is used to transport non-AudioVisual data. While an extensive study of the usage of RTP extensions for transport of non-AudioVisual data is outside the scope of this document, this chapter describes a few extensions that have been studied in the work that lead to this document.<a href="#section-10.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-1">A large number of RTP extensions have been specified for RTP. Many of the extensions have been specified with an AudioVisual use-case in mind. However, many of them can also be applied when RTP is used to transport non-AudioVisual data. While an extensive study of the usage of RTP extensions for transport of non-AudioVisual data is outside the scope of this document, this chapter describes a few extensions that have been studied in the work that lead to this document.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 <div id="simulcast-and-resolution">
-<section id="section-10.3.1">
+<section id="section-7.3.1">
           <h4 id="name-simulcast-and-resolution">
-<a href="#section-10.3.1" class="section-number selfRef">10.3.1. </a><a href="#name-simulcast-and-resolution" class="section-name selfRef">Simulcast and Resolution</a>
+<a href="#section-7.3.1" class="section-number selfRef">7.3.1. </a><a href="#name-simulcast-and-resolution" class="section-name selfRef">Simulcast and Resolution</a>
           </h4>
-<p id="section-10.3.1-1">While it is quite clear what "resolution" means for audio and video, there is no unique definition for non-AV data.<a href="#section-10.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-10.3.1-2">For example, resolution can refer to the number of digits are included when the payload contains numeric values.<a href="#section-10.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-10.3.1-3">For example, resolution can refer to how often the publisher is sending data. The more freuquent, the higher the resolution.<a href="#section-10.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-10.3.1-4">For example, resolution can refer to the amount of data (e.g., netadata) that a publisher in sending.<a href="#section-10.3.1-4" class="pilcrow">¶</a></p>
-<p id="section-10.3.1-5">A publisher can publish the same data using different "resolutions".<a href="#section-10.3.1-5" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-1">While it is quite clear what "resolution" means for audio and video, there is no unique definition for non-AV data.<a href="#section-7.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-2">For example, resolution can refer to the number of digits are included when the payload contains numeric values.<a href="#section-7.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-3">For example, resolution can refer to how often the publisher is sending data. The more freuquent, the higher the resolution.<a href="#section-7.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-4">For example, resolution can refer to the amount of data (e.g., netadata) that a publisher in sending.<a href="#section-7.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-7.3.1-5">A publisher can publish the same data using different "resolutions".<a href="#section-7.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="retransmission">
-<section id="section-10.3.2">
+<section id="section-7.3.2">
           <h4 id="name-retransmission">
-<a href="#section-10.3.2" class="section-number selfRef">10.3.2. </a><a href="#name-retransmission" class="section-name selfRef">Retransmission</a>
+<a href="#section-7.3.2" class="section-number selfRef">7.3.2. </a><a href="#name-retransmission" class="section-name selfRef">Retransmission</a>
           </h4>
-<p id="section-10.3.2-1">The RTP header carries both a sequence number and a timestamp to allow a receiver to distinguish between lost packets and periods of time when no data was transmitted.<a href="#section-10.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-10.3.2-2">By default RTP provides unreliable transport. The same applies to different PubSub frameworks that use UDP as transport protocol. However, some PubSub frameworks use TCP transport, or use other mechanisms in order to provide reliable data delivery. There are RTP extension that have been used to provide reliable data delivery, or to simply inform the sender that data has been lost.<a href="#section-10.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-10.3.2-3">XXX specifies an RTP extension where RTP packets are re-transmitted by default.<a href="#section-10.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-7.3.2-1">The RTP header carries both a sequence number and a timestamp to allow a receiver to distinguish between lost packets and periods of time when no data was transmitted.<a href="#section-7.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.3.2-2">By default RTP provides unreliable transport. The same applies to different PubSub frameworks that use UDP as transport protocol. However, some PubSub frameworks use TCP transport, or use other mechanisms in order to provide reliable data delivery. There are RTP extension that have been used to provide reliable data delivery, or to simply inform the sender that data has been lost.<a href="#section-7.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.3.2-3">XXX specifies an RTP extension where RTP packets are re-transmitted by default.<a href="#section-7.3.2-3" class="pilcrow">¶</a></p>
 <div id="redundant-audio-data">
-<section id="section-10.3.2.1">
+<section id="section-7.3.2.1">
             <h5 id="name-redundant-audio-data">
-<a href="#section-10.3.2.1" class="section-number selfRef">10.3.2.1. </a><a href="#name-redundant-audio-data" class="section-name selfRef">Redundant Audio Data</a>
+<a href="#section-7.3.2.1" class="section-number selfRef">7.3.2.1. </a><a href="#name-redundant-audio-data" class="section-name selfRef">Redundant Audio Data</a>
             </h5>
-<p id="section-10.3.2.1-1"><span>[<a href="#RFC2198" class="cite xref">RFC2198</a>]</span> defines an RTP payload format for encoding redundant audio data. If a data packet is lost, it might be possible to reconstruct the information of the lost packet from the redundant data that is included in the subsequent packets. The mechanism can also be used for non-AV data. However, in case of time-critical data, where the lost data would be considered "expired" it it would arrive as redundant data in a subsequent packet, the mechanism might not be useful (unless for logging purpose etc).<a href="#section-10.3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.3.2.1-1"><span>[<a href="#RFC2198" class="cite xref">RFC2198</a>]</span> defines an RTP payload format for encoding redundant audio data. If a data packet is lost, it might be possible to reconstruct the information of the lost packet from the redundant data that is included in the subsequent packets. The mechanism can also be used for non-AV data. However, in case of time-critical data, where the lost data would be considered "expired" it it would arrive as redundant data in a subsequent packet, the mechanism might not be useful (unless for logging purpose etc).<a href="#section-7.3.2.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="forward-error-detection-fec">
-<section id="section-10.3.2.2">
+<section id="section-7.3.2.2">
             <h5 id="name-forward-error-detection-fec">
-<a href="#section-10.3.2.2" class="section-number selfRef">10.3.2.2. </a><a href="#name-forward-error-detection-fec" class="section-name selfRef">Forward Error Detection (FEC)</a>
+<a href="#section-7.3.2.2" class="section-number selfRef">7.3.2.2. </a><a href="#name-forward-error-detection-fec" class="section-name selfRef">Forward Error Detection (FEC)</a>
             </h5>
-<p id="section-10.3.2.2-1"><span>[<a href="#RFC2733" class="cite xref">RFC2733</a>]</span><a href="#section-10.3.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-10.3.2.2-2">Multiple data packets are used to create a single FEC packet. The FEC payload contains information which data packets have been used to create the FEC packet.<a href="#section-10.3.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.3.2.2-1"><span>[<a href="#RFC2733" class="cite xref">RFC2733</a>]</span><a href="#section-7.3.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.3.2.2-2">Multiple data packets are used to create a single FEC packet. The FEC payload contains information which data packets have been used to create the FEC packet.<a href="#section-7.3.2.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2338,50 +2086,50 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
 </section>
 </div>
 <div id="rtcp-considerations-1">
-<section id="section-11">
+<section id="section-8">
       <h2 id="name-rtcp-considerations-2">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-rtcp-considerations-2" class="section-name selfRef">RTCP Considerations</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-rtcp-considerations-2" class="section-name selfRef">RTCP Considerations</a>
       </h2>
 <div id="rtcp-fb">
-<section id="section-11.1">
+<section id="section-8.1">
         <h3 id="name-rtcp-fb">
-<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-rtcp-fb" class="section-name selfRef">RTCP FB</a>
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-rtcp-fb" class="section-name selfRef">RTCP FB</a>
         </h3>
-<p id="section-11.1-1">The RTCP Feedback (FB) <span>[<a href="#RFC4585" class="cite xref">RFC4585</a>]</span><a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-1">The RTCP Feedback (FB) <span>[<a href="#RFC4585" class="cite xref">RFC4585</a>]</span><a href="#section-8.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="standardization-considerations">
-<section id="section-12">
+<section id="section-9">
       <h2 id="name-standardization-considerati">
-<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-standardization-considerati" class="section-name selfRef">Standardization Considerations</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-standardization-considerati" class="section-name selfRef">Standardization Considerations</a>
       </h2>
-<p id="section-12-1">This document does not formally standardize any new protocol extensions, SIP event packages etc. Each extension, event package etc described in the document would need to be standardized following the normal standardization procedures. The protocol extensions and event packages described in this document are collated and listed below.<a href="#section-12-1" class="pilcrow">¶</a></p>
-<p id="section-12-2">SIP Event Package for Conference State          Section XXX        Extension to the event package for providing separate information about publishers and subscribers.<a href="#section-12-2" class="pilcrow">¶</a></p>
-<p id="section-12-3">SIP Event Package for PublishSubscribe          Section XXX        New SIP event package for providing information about PubSub Conferences (conference URI and topic) hosted by a Conference Server.<a href="#section-12-3" class="pilcrow">¶</a></p>
+<p id="section-9-1">This document does not formally standardize any new protocol extensions, SIP event packages etc. Each extension, event package etc described in the document would need to be standardized following the normal standardization procedures. The protocol extensions and event packages described in this document are collated and listed below.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">SIP Event Package for Conference State          Section XXX        Extension to the event package for providing separate information about publishers and subscribers.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-3">SIP Event Package for PublishSubscribe          Section XXX        New SIP event package for providing information about PubSub Conferences (conference URI and topic) hosted by a Conference Server.<a href="#section-9-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-13">
+<section id="section-10">
       <h2 id="name-security-considerations">
-<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-13-1">The Security Considerations for SIP Conferencing apply to this document.<a href="#section-13-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">The Security Considerations for SIP Conferencing apply to this document.<a href="#section-10-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-14">
+<section id="section-11">
       <h2 id="name-iana-considerations">
-<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-14-1">This document has no IANA actions.<a href="#section-14-1" class="pilcrow">¶</a></p>
+<p id="section-11-1">This document has no IANA actions.<a href="#section-11-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
-<section id="section-15">
+<section id="section-12">
       <h2 id="name-normative-references">
-<a href="#section-15" class="section-number selfRef">15. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
 <dt id="RFC2119">[RFC2119]</dt>
@@ -2427,6 +2175,10 @@ appear in all capitals, as shown here.<a href="#section-3-1" class="pilcrow">¶<
 <dt id="RFC4575">[RFC4575]</dt>
       <dd>
 <span class="refAuthor">Rosenberg, J.</span>, <span class="refAuthor">Schulzrinne, H.</span>, and <span class="refAuthor">O. Levin, Ed.</span>, <span class="refTitle">"A Session Initiation Protocol (SIP) Event Package for Conference State"</span>, <span class="seriesInfo">RFC 4575</span>, <span class="seriesInfo">DOI 10.17487/RFC4575</span>, <time datetime="2006-08" class="refDate">August 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4575">https://www.rfc-editor.org/rfc/rfc4575</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4579">[RFC4579]</dt>
+      <dd>
+<span class="refAuthor">Johnston, A.</span> and <span class="refAuthor">O. Levin</span>, <span class="refTitle">"Session Initiation Protocol (SIP) Call Control - Conferencing for User Agents"</span>, <span class="seriesInfo">BCP 119</span>, <span class="seriesInfo">RFC 4579</span>, <span class="seriesInfo">DOI 10.17487/RFC4579</span>, <time datetime="2006-08" class="refDate">August 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4579">https://www.rfc-editor.org/rfc/rfc4579</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC4585">[RFC4585]</dt>
       <dd>
